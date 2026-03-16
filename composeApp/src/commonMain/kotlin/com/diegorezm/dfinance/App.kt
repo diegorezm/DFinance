@@ -1,67 +1,54 @@
 package com.diegorezm.dfinance
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import com.diegorezm.dfinance.theme.DFinanceTheme
-
 
 @Composable
 @Preview
 fun App() {
     DFinanceTheme {
-        Column(
-            modifier = Modifier
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // 1. Using standard Material 3 styles (already using Open Sans)
-            Text(
-                text = "Headline Bold (Default)",
-                style = MaterialTheme.typography.headlineLarge
-            )
+        val backStack = remember { mutableStateListOf<Route>(Route.Home) }
 
-            Text(
-                text = "Body Medium (Default)",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            // 2. Manual weight overrides
-            Text(
-                text = "Extra Bold Text",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.ExtraBold)
-            )
-
-            Text(
-                text = "Light Weight Text",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Light)
-            )
-
-            // 3. Italic styles
-            Text(
-                text = "Italic Text",
-                style = MaterialTheme.typography.bodyLarge.copy(fontStyle = FontStyle.Italic)
-            )
-
-            Text(
-                text = "Bold Italic Text",
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontStyle = FontStyle.Italic
-                )
-            )
-        }
+        NavDisplay(
+            backStack = backStack,
+            onBack = { backStack.removeLastOrNull() },
+            entryProvider = entryProvider {
+                entry<Route.Home> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .safeDrawingPadding()
+                    ) {
+                        Text("Home Screen")
+                        Button(onClick = { backStack.add(Route.Details("123")) }) {
+                            Text("Go to Details")
+                        }
+                    }
+                }
+                entry<Route.Details> { key ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .safeDrawingPadding()
+                    ) {
+                        Text("Details Screen for ID: ${key.id}")
+                        Button(onClick = { backStack.removeLastOrNull() }) {
+                            Text("Go Back")
+                        }
+                    }
+                }
+            }
+        )
     }
 }
