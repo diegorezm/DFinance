@@ -31,7 +31,7 @@ fun App() {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Button(onClick = { showContent = !showContent }) {
+            Button(onClick = { showContent = !showContent }, shape = AppShapes.large) {
                 Text("Click me!")
             }
             AnimatedVisibility(showContent) {
