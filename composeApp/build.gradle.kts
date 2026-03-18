@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -30,6 +31,7 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.koin.android)
+            implementation(libs.sqldelight.android.driver)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -50,6 +52,12 @@ kotlin {
             implementation(libs.jetbrains.navigation3.ui)
             implementation(libs.jetbrains.material3.adaptiveNavigation3)
             implementation(libs.jetbrains.lifecycle.viewmodelNavigation3)
+
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.runtime)
+            implementation(libs.sqldelight.coroutines)
+            implementation(libs.material.icons)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -88,4 +96,12 @@ configure<ApplicationExtension> {
 
 dependencies {
     debugImplementation(libs.compose.uiTooling)
+}
+
+sqldelight {
+    databases {
+        create("DFinanceDatabase") {
+            packageName.set("com.diegorezm.dfinance.db")
+        }
+    }
 }

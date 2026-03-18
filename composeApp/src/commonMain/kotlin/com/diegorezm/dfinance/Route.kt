@@ -8,5 +8,8 @@ sealed interface Route {
     data object Home : Route
 
     @Serializable
-    data class Details(val id: String) : Route
+    data object BankAccounts : Route
+
+    @Serializable
+    data object AppSettings : Route
 }

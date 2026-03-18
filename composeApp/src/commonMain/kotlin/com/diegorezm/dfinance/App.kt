@@ -1,54 +1,90 @@
 package com.diegorezm.dfinance
 
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.diegorezm.dfinance.core.presentation.components.AppBottomNavigation
 import com.diegorezm.dfinance.theme.DFinanceTheme
 
+@Preview()
 @Composable
-@Preview
 fun App() {
     DFinanceTheme {
         val backStack = remember { mutableStateListOf<Route>(Route.Home) }
+        val currentRoute = backStack.lastOrNull()
 
-        NavDisplay(
-            backStack = backStack,
-            onBack = { backStack.removeLastOrNull() },
-            entryProvider = entryProvider {
-                entry<Route.Home> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .safeDrawingPadding()
-                    ) {
-                        Text("Home Screen")
-                        Button(onClick = { backStack.add(Route.Details("123")) }) {
-                            Text("Go to Details")
+        Scaffold(
+            bottomBar = {
+                AppBottomNavigation(
+                    currentRoute = currentRoute,
+                    onRouteSelected = { route ->
+                        if (route != currentRoute) {
+                            backStack.clear()
+                            backStack.add(route)
                         }
                     }
-                }
-                entry<Route.Details> { key ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .safeDrawingPadding()
-                    ) {
-                        Text("Details Screen for ID: ${key.id}")
-                        Button(onClick = { backStack.removeLastOrNull() }) {
-                            Text("Go Back")
-                        }
-                    }
-                }
+                )
             }
-        )
+        ) { innerPadding ->
+            NavDisplay(
+                modifier = Modifier.padding(innerPadding),
+                backStack = backStack,
+                onBack = {
+                    if (backStack.size > 1) {
+                        backStack.removeLast()
+                    }
+                },
+                transitionSpec = {
+                    val enterTransition = slideInHorizontally { it } + fadeIn()
+                    val exitTransition = slideOutHorizontally { -it } + fadeOut()
+
+                    ContentTransform(enterTransition, exitTransition)
+                },
+                entryProvider = entryProvider {
+                    entry<Route.Home> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("Home Screen")
+                            }
+                        }
+                    }
+                    entry<Route.BankAccounts> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("Bank Accounts Screen")
+                        }
+                    }
+                    entry<Route.AppSettings> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("App Settings Screen")
+                        }
+                    }
+                }
+            )
+        }
     }
 }
