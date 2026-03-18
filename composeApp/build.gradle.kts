@@ -47,6 +47,7 @@ kotlin {
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
 
             // Navigation 3
             implementation(libs.jetbrains.navigation3.ui)

@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.diegorezm.dfinance.bank_accounts.presentation.BankAccountsScreen
 import com.diegorezm.dfinance.core.presentation.components.AppBottomNavigation
 import com.diegorezm.dfinance.theme.DFinanceTheme
 
@@ -68,12 +69,7 @@ fun App() {
                         }
                     }
                     entry<Route.BankAccounts> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("Bank Accounts Screen")
-                        }
+                        BankAccountsScreen()
                     }
                     entry<Route.AppSettings> {
                         Box(
