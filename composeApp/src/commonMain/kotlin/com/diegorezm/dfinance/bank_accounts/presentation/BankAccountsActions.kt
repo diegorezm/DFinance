@@ -10,4 +10,6 @@ sealed interface BankAccountsActions {
     data class OnDeleteAccountClick(val id: Long) : BankAccountsActions
     object OnDismissCreateSheet : BankAccountsActions
     data class OnConfirmCreateAccount(val dto: BankAccountDTO) : BankAccountsActions
+    object OnDismissEditSheet : BankAccountsActions
+    data class OnConfirmEditAccount(val dto: BankAccountDTO) : BankAccountsActions
 }

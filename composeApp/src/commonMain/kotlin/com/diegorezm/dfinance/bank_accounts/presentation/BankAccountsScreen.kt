@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
 import com.diegorezm.dfinance.bank_accounts.presentation.components.BankAccountCreateSheet
+import com.diegorezm.dfinance.bank_accounts.presentation.components.BankAccountEditSheet
 import com.diegorezm.dfinance.bank_accounts.presentation.components.BankAccountItem
 import com.diegorezm.dfinance.bank_accounts.presentation.components.BankAccountsEmptyState
 import com.diegorezm.dfinance.bank_accounts.presentation.components.NeobrutalistFAB
@@ -34,7 +35,6 @@ import org.koin.compose.viewmodel.koinViewModel
 fun BankAccountsScreen(
     viewModel: BankAccountsViewModel = koinViewModel(),
     onAccountClick: (BankAccount) -> Unit = {},
-    onEditAccountClick: (BankAccount) -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -45,6 +45,18 @@ fun BankAccountsScreen(
             },
             onConfirm = { accountDTO ->
                 viewModel.onAction(BankAccountsActions.OnConfirmCreateAccount(accountDTO))
+            }
+        )
+    }
+
+    state.editingAccount?.let { account ->
+        BankAccountEditSheet(
+            account = account,
+            onDismiss = {
+                viewModel.onAction(BankAccountsActions.OnDismissEditSheet)
+            },
+            onConfirm = { dto ->
+                viewModel.onAction(BankAccountsActions.OnConfirmEditAccount(dto))
             }
         )
     }
@@ -88,7 +100,9 @@ fun BankAccountsScreen(
                         BankAccountItem(
                             account = account,
                             onClick = { onAccountClick(account) },
-                            onEditClick = { onEditAccountClick(account) },
+                            onEditClick = {
+                                viewModel.onAction(BankAccountsActions.OnEditAccountClick(account))
+                            },
                             onDeleteClick = {
                                 if (account.id != null) {
                                     viewModel.onAction(

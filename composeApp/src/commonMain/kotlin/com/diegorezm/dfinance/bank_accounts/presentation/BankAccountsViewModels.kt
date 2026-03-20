@@ -5,11 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.diegorezm.dfinance.bank_accounts.data.dto.BankAccountDTO
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccountRepository
+import com.diegorezm.dfinance.core.domain.onError
+import com.diegorezm.dfinance.core.domain.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -32,7 +33,8 @@ class BankAccountsViewModel(
             is BankAccountsActions.OnAccountClick -> { /* navigate to detail */
             }
 
-            is BankAccountsActions.OnEditAccountClick -> { /* navigate to edit */
+            is BankAccountsActions.OnEditAccountClick -> {
+                _state.update { it.copy(editingAccount = action.account) }
             }
 
             is BankAccountsActions.OnDeleteAccountClick -> deleteAccount(action.id)
@@ -45,10 +47,28 @@ class BankAccountsViewModel(
                 createAccount(action.dto)
                 _state.update { it.copy(isCreateSheetOpen = false) }
             }
+
+            is BankAccountsActions.OnDismissEditSheet -> {
+                _state.update { it.copy(editingAccount = null) }
+            }
+
+            is BankAccountsActions.OnConfirmEditAccount -> {
+                val currentAccount = _state.value.editingAccount
+                if (currentAccount?.id != null) {
+                    val updatedAccount = currentAccount.copy(
+                        name = action.dto.name,
+                        currencyCode = action.dto.currencyCode,
+                        balance = action.dto.balance,
+                        color = action.dto.color
+                    )
+                    updateAccount(updatedAccount)
+                }
+                _state.update { it.copy(editingAccount = null) }
+            }
         }
     }
 
-    fun fetchAccounts() {
+    private fun fetchAccounts() {
         viewModelScope.launch {
             repository.findAll()
                 .onStart {
@@ -69,22 +89,40 @@ class BankAccountsViewModel(
                 name = dto.name,
                 currencyCode = dto.currencyCode,
                 balance = dto.balance,
-                icon = "Default", // or get from dto if added
+                icon = "Default",
                 color = dto.color
             )
             repository.create(account)
+                .onSuccess {
+                    _state.update { it.copy(error = null) }
+                }
+                .onError {
+                    _state.update { it.copy(error = it.error.toString()) }
+                }
         }
     }
 
-    fun updateAccount(account: BankAccount) {
+    private fun updateAccount(account: BankAccount) {
         viewModelScope.launch {
             repository.update(account)
+                .onSuccess {
+                    _state.update { it.copy(error = null) }
+                }
+                .onError {
+                    _state.update { it.copy(error = it.error.toString()) }
+                }
         }
     }
 
-    fun deleteAccount(id: Long) {
+    private fun deleteAccount(id: Long) {
         viewModelScope.launch {
             repository.delete(id)
+                .onSuccess {
+                    _state.update { it.copy(error = null) }
+                }
+                .onError {
+                    _state.update { it.copy(error = it.error.toString()) }
+                }
         }
     }
 }

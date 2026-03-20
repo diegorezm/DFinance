@@ -14,14 +14,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.bank_accounts.data.dto.BankAccountDTO
+import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
+import com.diegorezm.dfinance.bank_accounts.domain.Currency
 import dfinance.composeapp.generated.resources.Res
-import dfinance.composeapp.generated.resources.create
-import dfinance.composeapp.generated.resources.new_account_title
+import dfinance.composeapp.generated.resources.edit_account_title
+import dfinance.composeapp.generated.resources.save
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BankAccountCreateSheet(
+fun BankAccountEditSheet(
+    account: BankAccount,
     onDismiss: () -> Unit,
     onConfirm: (BankAccountDTO) -> Unit
 ) {
@@ -35,7 +38,7 @@ fun BankAccountCreateSheet(
         containerColor = MaterialTheme.colorScheme.background
     ) {
         Text(
-            text = stringResource(Res.string.new_account_title),
+            text = stringResource(Res.string.edit_account_title),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -46,7 +49,11 @@ fun BankAccountCreateSheet(
         )
 
         BankAccountForm(
-            submitLabel = stringResource(Res.string.create),
+            initialName = account.name,
+            initialBalance = (account.balance / 100.0).toString(),
+            initialCurrency = Currency.fromCode(account.currencyCode),
+            initialColor = account.color,
+            submitLabel = stringResource(Res.string.save),
             onDismiss = onDismiss,
             onSubmit = onConfirm
         )

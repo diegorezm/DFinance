@@ -22,4 +22,6 @@
     <string name="nav_home">Home</string>
     <string name="nav_accounts">Accounts</string>
     <string name="nav_settings">Settings</string>
+    <string name="edit_account_title">Edit account</string>
+    <string name="save">Save</string>
 </resources>

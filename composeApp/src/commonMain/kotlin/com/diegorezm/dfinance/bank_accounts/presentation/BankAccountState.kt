@@ -6,5 +6,6 @@ data class BankAccountState(
     val isLoading: Boolean = false,
     val accounts: List<BankAccount> = emptyList(),
     val error: String? = null,
-    val isCreateSheetOpen: Boolean = false
+    val isCreateSheetOpen: Boolean = false,
+    val editingAccount: BankAccount? = null
 )
