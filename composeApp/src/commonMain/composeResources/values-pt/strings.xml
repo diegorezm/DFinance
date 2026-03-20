@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">DFinance</string>
+    <string name="accounts_title">Contas</string>
+    <string name="add_account">Adicionar conta</string>
+    <string name="no_accounts">Nenhuma conta ainda.</string>
+    <string name="add_first_account">Toque em + para adicionar a primeira.</string>
+    <string name="delete_account_title">Excluir conta?</string>
+    <string name="delete_account_message">\"%1$s\" será removida. Esta ação não pode ser desfeita.</string>
+    <string name="delete">Excluir</string>
+    <string name="cancel">Cancelar</string>
+    <string name="edit">Editar</string>
+    <string name="new_account_title">Nova conta</string>
+    <string name="name_label">Nome</string>
+    <string name="name_placeholder">ex: Conta principal</string>
+    <string name="balance_label">Saldo inicial</string>
+    <string name="balance_placeholder">0,00</string>
+    <string name="balance_error">Insira um valor válido</string>
+    <string name="currency_label">Moeda</string>
+    <string name="color_label">Cor</string>
+    <string name="create">Criar</string>
+    <string name="unknown_error">Erro desconhecido</string>
+    <string name="nav_home">Principal</string>
+    <string name="nav_accounts">Contas</string>
+    <string name="nav_settings">Configurações</string>
+</resources>

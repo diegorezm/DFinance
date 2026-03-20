@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">DFinance</string>
+    <string name="accounts_title">Accounts</string>
+    <string name="add_account">Add account</string>
+    <string name="no_accounts">No accounts yet.</string>
+    <string name="add_first_account">Tap + to add your first one.</string>
+    <string name="delete_account_title">Delete account?</string>
+    <string name="delete_account_message">\"%1$s\" will be removed. This cannot be undone.</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="edit">Edit</string>
+    <string name="new_account_title">New account</string>
+    <string name="name_label">Name</string>
+    <string name="name_placeholder">e.g. Main account</string>
+    <string name="balance_label">Initial balance</string>
+    <string name="balance_placeholder">0.00</string>
+    <string name="balance_error">Enter a valid amount</string>
+    <string name="currency_label">Currency</string>
+    <string name="color_label">Color</string>
+    <string name="create">Create</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_accounts">Accounts</string>
+    <string name="nav_settings">Settings</string>
+</resources>
