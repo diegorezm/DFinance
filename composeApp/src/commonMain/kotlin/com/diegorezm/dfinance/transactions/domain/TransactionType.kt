@@ -3,8 +3,7 @@ package com.diegorezm.dfinance.transactions.domain
 enum class TransactionType {
     INCOME,
     EXPENSE,
-    TRANSFER,
-    INITIAL_BALANCE;
+    TRANSFER;
 
     companion object {
         fun fromString(value: String): TransactionType =

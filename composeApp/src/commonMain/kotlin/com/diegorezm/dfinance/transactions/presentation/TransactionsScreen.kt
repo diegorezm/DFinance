@@ -25,13 +25,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.core.presentation.components.NeobrutalistBottomFloatingFAB
 import com.diegorezm.dfinance.core.presentation.components.NeobrutalistTopAppBar
-import com.diegorezm.dfinance.theme.DFinanceTheme
-import com.diegorezm.dfinance.transactions.data.repository.LocalTransactionRepository
 import com.diegorezm.dfinance.transactions.presentation.components.AccountSummaryCard
+import com.diegorezm.dfinance.transactions.presentation.components.TransactionCreateSheet
+import com.diegorezm.dfinance.transactions.presentation.components.TransactionEditSheet
 import com.diegorezm.dfinance.transactions.presentation.components.TransactionFilterBar
 import com.diegorezm.dfinance.transactions.presentation.components.TransactionItem
 import dfinance.composeapp.generated.resources.Res
@@ -46,10 +45,33 @@ import org.koin.compose.viewmodel.koinViewModel
 fun TransactionsScreen(
     viewModel: TransactionsViewModel = koinViewModel(),
     onBackClick: () -> Unit = {},
-    onAddTransactionClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.state.collectAsState()
+
+    if (state.isCreateSheetOpen) {
+        TransactionCreateSheet(
+            accountId = viewModel.bankId,
+            onDismiss = {
+                viewModel.onAction(TransactionsActions.OnDismissCreateSheet)
+            },
+            onConfirm = { dto ->
+                viewModel.onAction(TransactionsActions.OnConfirmCreateTransaction(dto))
+            }
+        )
+    }
+
+    state.editingTransaction?.let { transaction ->
+        TransactionEditSheet(
+            transaction = transaction,
+            onDismiss = {
+                viewModel.onAction(TransactionsActions.OnDismissEditSheet)
+            },
+            onConfirm = { dto ->
+                viewModel.onAction(TransactionsActions.OnConfirmEditTransaction(dto))
+            }
+        )
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -142,30 +164,25 @@ fun TransactionsScreen(
 
                     // Transaction list
                     items(state.filteredTransactions) { transaction ->
-                        TransactionItem(transaction = transaction)
+                        TransactionItem(
+                            transaction = transaction,
+                            onClick = {
+                                viewModel.onAction(TransactionsActions.OnEditTransactionClick(transaction))
+                            },
+                            onDeleteClick = {
+                                viewModel.onAction(TransactionsActions.OnDeleteTransactionClick(transaction.id))
+                            }
+                        )
                     }
                 }
             }
 
             NeobrutalistBottomFloatingFAB(
                 icon = Icons.Default.Add,
-                onClick = onAddTransactionClick,
+                onClick = {
+                    viewModel.onAction(TransactionsActions.OnAddTransactionClick)
+                },
             )
         }
-    }
-}
-
-@Preview
-@Composable
-private fun TransactionsScreenPreview() {
-    val viewModel = TransactionsViewModel(
-        repository = LocalTransactionRepository(),
-        bankId = 1L
-    )
-
-    DFinanceTheme {
-        TransactionsScreen(
-            viewModel
-        )
     }
 }

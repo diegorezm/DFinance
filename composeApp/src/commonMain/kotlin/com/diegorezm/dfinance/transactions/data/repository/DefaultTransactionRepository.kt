@@ -104,9 +104,7 @@ class DefaultTransactionRepository(private val db: DFinanceDatabase) : Transacti
 
         transactions.sumOf { t ->
             when (TransactionType.fromString(t.type)) {
-                TransactionType.INCOME,
-                TransactionType.INITIAL_BALANCE -> t.amount
-
+                TransactionType.INCOME -> t.amount
                 TransactionType.EXPENSE -> -t.amount
                 TransactionType.TRANSFER -> 0L
             }

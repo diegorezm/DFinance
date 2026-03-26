@@ -9,7 +9,9 @@ data class TransactionsState(
     val error: String? = null,
     val account: BankAccount? = null,
     val transactions: List<Transaction> = emptyList(),
-    val activeFilters: Set<TransactionType> = emptySet()
+    val activeFilters: Set<TransactionType> = emptySet(),
+    val isCreateSheetOpen: Boolean = false,
+    val editingTransaction: Transaction? = null
 ) {
     val filteredTransactions: List<Transaction>
         get() = if (activeFilters.isEmpty()) transactions
@@ -17,7 +19,7 @@ data class TransactionsState(
 
     val totalIncome: Long
         get() = transactions
-            .filter { it.type == TransactionType.INCOME || it.type == TransactionType.INITIAL_BALANCE }
+            .filter { it.type == TransactionType.INCOME }
             .sumOf { it.amount }
 
     val totalExpenses: Long

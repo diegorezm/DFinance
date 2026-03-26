@@ -21,7 +21,6 @@ import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.type_all
 import dfinance.composeapp.generated.resources.type_expense
 import dfinance.composeapp.generated.resources.type_income
-import dfinance.composeapp.generated.resources.type_initial
 import dfinance.composeapp.generated.resources.type_transfer
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -34,7 +33,6 @@ fun TransactionType?.labelRes(): StringResource = when (this) {
     TransactionType.INCOME -> Res.string.type_income
     TransactionType.EXPENSE -> Res.string.type_expense
     TransactionType.TRANSFER -> Res.string.type_transfer
-    TransactionType.INITIAL_BALANCE -> Res.string.type_initial
 }
 
 @Composable

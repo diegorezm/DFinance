@@ -39,6 +39,43 @@ class TransactionsViewModel(
                 _state.value = _state.value.copy(activeFilters = updatedFilters)
             }
 
+            TransactionsActions.OnAddTransactionClick -> {
+                _state.value = _state.value.copy(isCreateSheetOpen = true)
+            }
+
+            TransactionsActions.OnDismissCreateSheet -> {
+                _state.value = _state.value.copy(isCreateSheetOpen = false)
+            }
+
+            is TransactionsActions.OnConfirmCreateTransaction -> {
+                viewModelScope.launch {
+                    repository.create(action.dto)
+                    _state.value = _state.value.copy(isCreateSheetOpen = false)
+                }
+            }
+
+            is TransactionsActions.OnEditTransactionClick -> {
+                _state.value = _state.value.copy(editingTransaction = action.transaction)
+            }
+
+            TransactionsActions.OnDismissEditSheet -> {
+                _state.value = _state.value.copy(editingTransaction = null)
+            }
+
+            is TransactionsActions.OnConfirmEditTransaction -> {
+                viewModelScope.launch {
+                    val id = _state.value.editingTransaction?.id ?: return@launch
+                    repository.update(id, action.dto)
+                    _state.value = _state.value.copy(editingTransaction = null)
+                }
+            }
+
+            is TransactionsActions.OnDeleteTransactionClick -> {
+                viewModelScope.launch {
+                    repository.delete(action.id)
+                }
+            }
+
             else -> {}
         }
 

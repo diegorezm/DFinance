@@ -58,6 +58,7 @@ kotlin {
             implementation(libs.runtime)
             implementation(libs.sqldelight.coroutines)
             implementation(libs.material.icons)
+            implementation(libs.kotlinx.datetime)
 
         }
         commonTest.dependencies {

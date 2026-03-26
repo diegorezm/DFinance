@@ -2,6 +2,7 @@ package com.diegorezm.dfinance.transactions.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,14 +13,23 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,20 +40,72 @@ import com.diegorezm.dfinance.theme.DFinanceTheme
 import com.diegorezm.dfinance.transactions.domain.Transaction
 import com.diegorezm.dfinance.transactions.domain.TransactionType
 import dfinance.composeapp.generated.resources.Res
+import dfinance.composeapp.generated.resources.cancel
+import dfinance.composeapp.generated.resources.delete
+import dfinance.composeapp.generated.resources.delete_transaction_message
+import dfinance.composeapp.generated.resources.delete_transaction_title
 import dfinance.composeapp.generated.resources.type_expense
 import dfinance.composeapp.generated.resources.type_income
-import dfinance.composeapp.generated.resources.type_initial_balance
 import dfinance.composeapp.generated.resources.type_transfer
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TransactionItem(
     transaction: Transaction,
+    onClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            shape = RoundedCornerShape(0.dp),
+            modifier = Modifier.border(2.dp, MaterialTheme.colorScheme.outline),
+            containerColor = MaterialTheme.colorScheme.surface,
+            title = {
+                Text(
+                    text = stringResource(Res.string.delete_transaction_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(Res.string.delete_transaction_message),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDeleteDialog = false
+                    onDeleteClick()
+                }) {
+                    Text(
+                        stringResource(Res.string.delete),
+                        color = MaterialTheme.colorScheme.error,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text(
+                        stringResource(Res.string.cancel),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        )
+    }
+
     val (icon, iconBg, amountColor, prefix, labelRes) = when (transaction.type) {
         TransactionType.INCOME -> Quintuple(
-            Icons.Default.KeyboardArrowDown,
+            Icons.Default.KeyboardArrowUp,
             Color(0xFF4CAF50),
             Color(0xFF4CAF50),
             "+",
@@ -51,7 +113,7 @@ fun TransactionItem(
         )
 
         TransactionType.EXPENSE -> Quintuple(
-            Icons.Default.KeyboardArrowUp,
+            Icons.Default.KeyboardArrowDown,
             Color(0xFFF44336),
             Color(0xFFF44336),
             "-",
@@ -64,14 +126,6 @@ fun TransactionItem(
             MaterialTheme.colorScheme.onSurface,
             "",
             Res.string.type_transfer
-        )
-
-        TransactionType.INITIAL_BALANCE -> Quintuple(
-            Icons.Default.KeyboardArrowDown,
-            Color(0xFF4CAF50),
-            Color(0xFF4CAF50),
-            "+",
-            Res.string.type_initial_balance
         )
     }
 
@@ -87,11 +141,15 @@ fun TransactionItem(
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surface)
                 .border(2.dp, MaterialTheme.colorScheme.outline)
+                .clickable { onClick() }
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Box(
                     modifier = Modifier
                         .size(40.dp)
@@ -111,7 +169,7 @@ fun TransactionItem(
 
                 Column {
                     Text(
-                        text = stringResource(labelRes),
+                        text = transaction.note ?: stringResource(labelRes),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -124,12 +182,23 @@ fun TransactionItem(
                 }
             }
 
-            Text(
-                text = "$prefix${transaction.amount.toDisplayAmount()}",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
-                color = amountColor
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "$prefix${transaction.amount.toDisplayAmount()}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = amountColor
+                )
+
+                IconButton(onClick = { showDeleteDialog = true }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(Res.string.delete),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
         }
     }
 }
@@ -156,6 +225,8 @@ private fun TransactionItemPreview() {
                     note = "Salary",
                     date = "2024-03-20T10:00:00"
                 ),
+                onClick = {},
+                onDeleteClick = {}
             )
         }
     }
