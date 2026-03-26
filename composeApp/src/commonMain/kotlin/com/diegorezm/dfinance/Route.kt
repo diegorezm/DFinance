@@ -12,4 +12,7 @@ sealed interface Route {
 
     @Serializable
     data object AppSettings : Route
+
+    @Serializable
+    data class Transactions(val bankId: Long) : Route
 }

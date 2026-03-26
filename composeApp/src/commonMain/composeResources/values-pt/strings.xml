@@ -22,4 +22,22 @@
     <string name="nav_home">Principal</string>
     <string name="nav_accounts">Contas</string>
     <string name="nav_settings">Configurações</string>
+
+    <!-- Transaction Types -->
+    <string name="type_income">Receita</string>
+    <string name="type_expense">Despesa</string>
+    <string name="type_transfer">Transferência</string>
+    <string name="type_initial_balance">Saldo Inicial</string>
+    <string name="type_all">Tudo</string>
+    <string name="type_initial">Inicial</string>
+
+    <!-- Summary Card -->
+    <string name="summary_income">Receita</string>
+    <string name="summary_expenses">Despesas</string>
+
+    <!-- Transactions Screen -->
+    <string name="transactions_title">Transações</string>
+    <string name="back">Voltar</string>
+    <string name="add_transaction">Nova transação</string>
+    <string name="no_transactions">Nenhuma transação ainda.</string>
 </resources>

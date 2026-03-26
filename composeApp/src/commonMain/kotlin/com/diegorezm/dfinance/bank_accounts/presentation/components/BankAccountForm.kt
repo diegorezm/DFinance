@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -30,16 +29,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.bank_accounts.data.dto.BankAccountDTO
 import com.diegorezm.dfinance.bank_accounts.domain.Currency
 import com.diegorezm.dfinance.theme.DFinanceTheme
 import dfinance.composeapp.generated.resources.Res
-import dfinance.composeapp.generated.resources.balance_error
-import dfinance.composeapp.generated.resources.balance_label
-import dfinance.composeapp.generated.resources.balance_placeholder
 import dfinance.composeapp.generated.resources.cancel
 import dfinance.composeapp.generated.resources.color_label
 import dfinance.composeapp.generated.resources.currency_label
@@ -51,7 +46,6 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun BankAccountForm(
     initialName: String = "",
-    initialBalance: String = "",
     initialCurrency: Currency = Currency.BRL,
     initialColor: String = predefinedColors.first(),
     submitLabel: String,
@@ -59,13 +53,10 @@ fun BankAccountForm(
     onSubmit: (BankAccountDTO) -> Unit
 ) {
     var name by remember { mutableStateOf(initialName) }
-    var balanceInput by remember { mutableStateOf(initialBalance) }
     var selectedCurrency by remember { mutableStateOf(initialCurrency) }
     var selectedColor by remember { mutableStateOf(initialColor) }
     var currencyExpanded by remember { mutableStateOf(false) }
-
-    val balanceError = balanceInput.toDoubleOrNull() == null && balanceInput.isNotEmpty()
-    val canSubmit = name.isNotBlank() && !balanceError
+    val canSubmit = name.isNotBlank()
 
     Column(
         modifier = Modifier
@@ -105,50 +96,6 @@ fun BankAccountForm(
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
-        }
-
-        // Initial balance
-        Column {
-            Text(
-                text = stringResource(Res.string.balance_label),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(
-                value = balanceInput,
-                onValueChange = { balanceInput = it },
-                placeholder = {
-                    Text(
-                        stringResource(Res.string.balance_placeholder),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
-                    )
-                },
-                isError = balanceError,
-                singleLine = true,
-                textStyle = MaterialTheme.typography.bodyMedium,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                shape = RoundedCornerShape(0.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.outline,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                    errorBorderColor = MaterialTheme.colorScheme.error,
-                    cursorColor = MaterialTheme.colorScheme.primary,
-                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onBackground
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-            if (balanceError) {
-                Text(
-                    text = stringResource(Res.string.balance_error),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
         }
 
         // Currency picker
@@ -243,12 +190,11 @@ fun BankAccountForm(
 
             Button(
                 onClick = {
-                    val balanceCents = ((balanceInput.toDoubleOrNull() ?: 0.0) * 100).toLong()
                     onSubmit(
                         BankAccountDTO(
                             name = name.trim(),
                             currencyCode = selectedCurrency.code,
-                            balance = balanceCents,
+                            balance = 0,
                             color = selectedColor
                         )
                     )

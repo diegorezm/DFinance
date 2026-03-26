@@ -1,0 +1,46 @@
+CREATE TABLE TransactionEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    account_id INTEGER NOT NULL REFERENCES BankAccountEntity(id),
+    subcategory_id INTEGER REFERENCES SubcategoryEntity(id),
+    to_account_id INTEGER REFERENCES BankAccountEntity(id),
+    type TEXT NOT NULL,
+    amount INTEGER NOT NULL,
+    note TEXT,
+    date TEXT NOT NULL DEFAULT (datetime('now')),
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    deleted_at TEXT
+);
+
+findAll:
+SELECT * FROM TransactionEntity WHERE deleted_at IS NULL ORDER BY date DESC;
+
+findByAccountId:
+SELECT * FROM TransactionEntity
+WHERE account_id = ? AND deleted_at IS NULL ORDER BY date DESC;
+
+findByMonth:
+SELECT * FROM TransactionEntity
+WHERE date LIKE ? || '%' AND deleted_at IS NULL ORDER BY date DESC;
+
+findByAccountIdAndMonth:
+SELECT * FROM TransactionEntity
+WHERE account_id = ? AND date LIKE ? || '%' AND deleted_at IS NULL ORDER BY date DESC;
+
+findVisible:
+SELECT * FROM TransactionEntity
+WHERE deleted_at IS NULL AND type != 'INITIAL_BALANCE' ORDER BY date DESC;
+
+insert:
+INSERT INTO TransactionEntity(account_id, subcategory_id, to_account_id, type, amount, note, date)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+update:
+UPDATE TransactionEntity
+SET subcategory_id = ?, type = ?, amount = ?, note = ?, date = ?, updated_at = datetime('now')
+WHERE id = ?;
+
+softDelete:
+UPDATE TransactionEntity
+SET deleted_at = datetime('now')
+WHERE id = ?;

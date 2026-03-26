@@ -24,4 +24,22 @@
     <string name="nav_settings">Settings</string>
     <string name="edit_account_title">Edit account</string>
     <string name="save">Save</string>
+
+    <!-- Transaction Types -->
+    <string name="type_income">Income</string>
+    <string name="type_expense">Expense</string>
+    <string name="type_transfer">Transfer</string>
+    <string name="type_initial_balance">Initial Balance</string>
+    <string name="type_all">All</string>
+    <string name="type_initial">Initial</string>
+
+    <!-- Summary Card -->
+    <string name="summary_income">Income</string>
+    <string name="summary_expenses">Expenses</string>
+
+    <!-- Transactions Screen -->
+    <string name="transactions_title">Transactions</string>
+    <string name="back">Back</string>
+    <string name="add_transaction">Add transaction</string>
+    <string name="no_transactions">No transactions yet.</string>
 </resources>

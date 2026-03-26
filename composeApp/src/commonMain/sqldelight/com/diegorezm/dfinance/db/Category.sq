@@ -1,0 +1,33 @@
+CREATE TABLE CategoryEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    bucket TEXT NOT NULL,
+    color TEXT NOT NULL DEFAULT '#4CAF50',
+    is_default INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    deleted_at TEXT
+);
+
+findAll:
+SELECT * FROM CategoryEntity WHERE deleted_at IS NULL;
+
+findByBucket:
+SELECT * FROM CategoryEntity WHERE bucket = ? AND deleted_at IS NULL;
+
+findById:
+SELECT * FROM CategoryEntity WHERE id = ? AND deleted_at IS NULL;
+
+insert:
+INSERT INTO CategoryEntity(name, bucket, color, is_default)
+VALUES (?, ?, ?, ?);
+
+update:
+UPDATE CategoryEntity
+SET name = ?, color = ?, updated_at = datetime('now')
+WHERE id = ?;
+
+softDelete:
+UPDATE CategoryEntity
+SET deleted_at = datetime('now')
+WHERE id = ? AND is_default = 0;

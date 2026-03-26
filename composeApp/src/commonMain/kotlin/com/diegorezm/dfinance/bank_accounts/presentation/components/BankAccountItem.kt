@@ -151,12 +151,6 @@ fun BankAccountItem(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${account.balance.toDisplayAmount()} ${account.currencyCode}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -167,11 +161,15 @@ fun BankAccountItem(
             expanded = showMenu,
             onDismissRequest = { showMenu = false },
             shape = RoundedCornerShape(0.dp),
-            modifier = Modifier.background(MaterialTheme.colorScheme.background).border(2.dp, MaterialTheme.colorScheme.outline)
+            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                .border(2.dp, MaterialTheme.colorScheme.outline)
         ) {
             DropdownMenuItem(
                 text = {
-                    Text(stringResource(Res.string.edit), style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        stringResource(Res.string.edit),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 },
                 leadingIcon = {
                     Icon(

@@ -24,9 +24,11 @@ import com.diegorezm.dfinance.bank_accounts.presentation.components.BankAccountC
 import com.diegorezm.dfinance.bank_accounts.presentation.components.BankAccountEditSheet
 import com.diegorezm.dfinance.bank_accounts.presentation.components.BankAccountItem
 import com.diegorezm.dfinance.bank_accounts.presentation.components.BankAccountsEmptyState
-import com.diegorezm.dfinance.bank_accounts.presentation.components.NeobrutalistFAB
+import com.diegorezm.dfinance.core.presentation.components.NeobrutalistBottomFloatingFAB
+import com.diegorezm.dfinance.core.presentation.components.NeobrutalistTopAppBar
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.add_account
+import dfinance.composeapp.generated.resources.nav_accounts
 import dfinance.composeapp.generated.resources.unknown_error
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -62,13 +64,9 @@ fun BankAccountsScreen(
     }
 
     Scaffold(
-        floatingActionButton = {
-            NeobrutalistFAB(
-                icon = Icons.Default.Add,
-                onClick = {
-                    viewModel.onAction(BankAccountsActions.OnAddAccountClick)
-                },
-                contentDescription = stringResource(Res.string.add_account)
+        topBar = {
+            NeobrutalistTopAppBar(
+                title = stringResource(Res.string.nav_accounts)
             )
         }
     ) { padding ->
@@ -104,16 +102,21 @@ fun BankAccountsScreen(
                                 viewModel.onAction(BankAccountsActions.OnEditAccountClick(account))
                             },
                             onDeleteClick = {
-                                if (account.id != null) {
-                                    viewModel.onAction(
-                                        BankAccountsActions.OnDeleteAccountClick(account.id)
-                                    )
-                                }
+                                viewModel.onAction(
+                                    BankAccountsActions.OnDeleteAccountClick(account.id)
+                                )
                             }
                         )
                     }
                 }
             }
+            NeobrutalistBottomFloatingFAB(
+                icon = Icons.Default.Add,
+                onClick = {
+                    viewModel.onAction(BankAccountsActions.OnAddAccountClick)
+                },
+                contentDescription = stringResource(Res.string.add_account)
+            )
         }
     }
 }

@@ -1,0 +1,30 @@
+CREATE TABLE SubcategoryEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    category_id INTEGER NOT NULL REFERENCES CategoryEntity(id),
+    is_default INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    deleted_at TEXT
+);
+
+findAll:
+SELECT * FROM SubcategoryEntity WHERE deleted_at IS NULL;
+
+findByCategoryId:
+SELECT * FROM SubcategoryEntity
+WHERE category_id = ? AND deleted_at IS NULL;
+
+insert:
+INSERT INTO SubcategoryEntity(name, category_id, is_default)
+VALUES (?, ?, ?);
+
+update:
+UPDATE SubcategoryEntity
+SET name = ?, updated_at = datetime('now')
+WHERE id = ?;
+
+softDelete:
+UPDATE SubcategoryEntity
+SET deleted_at = datetime('now')
+WHERE id = ? AND is_default = 0;

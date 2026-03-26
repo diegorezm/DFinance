@@ -103,6 +103,7 @@ sqldelight {
     databases {
         create("DFinanceDatabase") {
             packageName.set("com.diegorezm.dfinance.db")
+            dialect(libs.sqldelight.sqlite.dialect)
         }
     }
 }

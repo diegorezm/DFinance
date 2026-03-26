@@ -50,7 +50,6 @@ fun BankAccountEditSheet(
 
         BankAccountForm(
             initialName = account.name,
-            initialBalance = (account.balance / 100.0).toString(),
             initialCurrency = Currency.fromCode(account.currencyCode),
             initialColor = account.color,
             submitLabel = stringResource(Res.string.save),

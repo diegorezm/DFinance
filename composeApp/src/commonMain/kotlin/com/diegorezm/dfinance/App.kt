@@ -8,7 +8,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +21,10 @@ import androidx.navigation3.ui.NavDisplay
 import com.diegorezm.dfinance.bank_accounts.presentation.BankAccountsScreen
 import com.diegorezm.dfinance.core.presentation.components.AppBottomNavigation
 import com.diegorezm.dfinance.theme.DFinanceTheme
+import com.diegorezm.dfinance.transactions.presentation.TransactionsScreen
+import com.diegorezm.dfinance.transactions.presentation.TransactionsViewModel
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Preview()
 @Composable
@@ -31,6 +34,7 @@ fun App() {
         val currentRoute = backStack.lastOrNull()
 
         Scaffold(
+            modifier = Modifier.fillMaxSize(),
             bottomBar = {
                 AppBottomNavigation(
                     currentRoute = currentRoute,
@@ -44,7 +48,8 @@ fun App() {
             }
         ) { innerPadding ->
             NavDisplay(
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier
+                    .fillMaxSize(),
                 backStack = backStack,
                 onBack = {
                     if (backStack.size > 1) {
@@ -69,7 +74,19 @@ fun App() {
                         }
                     }
                     entry<Route.BankAccounts> {
-                        BankAccountsScreen()
+                        BankAccountsScreen(
+                            onAccountClick = {
+                                backStack.add(Route.Transactions(it.id))
+                            }
+                        )
+                    }
+                    entry<Route.Transactions> { params ->
+                        val viewModel: TransactionsViewModel = koinViewModel {
+                            parametersOf(params.bankId)
+                        }
+                        TransactionsScreen(viewModel, onBackClick = {
+                            backStack.removeLast()
+                        })
                     }
                     entry<Route.AppSettings> {
                         Box(

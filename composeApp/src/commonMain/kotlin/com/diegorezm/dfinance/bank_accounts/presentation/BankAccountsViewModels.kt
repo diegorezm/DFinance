@@ -30,7 +30,8 @@ class BankAccountsViewModel(
                 _state.update { it.copy(isCreateSheetOpen = true) }
             }
 
-            is BankAccountsActions.OnAccountClick -> { /* navigate to detail */
+            is BankAccountsActions.OnAccountClick -> {
+
             }
 
             is BankAccountsActions.OnEditAccountClick -> {
@@ -58,7 +59,6 @@ class BankAccountsViewModel(
                     val updatedAccount = currentAccount.copy(
                         name = action.dto.name,
                         currencyCode = action.dto.currencyCode,
-                        balance = action.dto.balance,
                         color = action.dto.color
                     )
                     updateAccount(updatedAccount)
@@ -85,14 +85,7 @@ class BankAccountsViewModel(
 
     private fun createAccount(dto: BankAccountDTO) {
         viewModelScope.launch {
-            val account = BankAccount(
-                name = dto.name,
-                currencyCode = dto.currencyCode,
-                balance = dto.balance,
-                icon = "Default",
-                color = dto.color
-            )
-            repository.create(account)
+            repository.create(dto)
                 .onSuccess {
                     _state.update { it.copy(error = null) }
                 }

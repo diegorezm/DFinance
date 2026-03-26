@@ -2,6 +2,7 @@ package com.diegorezm.dfinance.bank_accounts.data.repositories
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.diegorezm.dfinance.bank_accounts.data.dto.BankAccountDTO
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccountRepository
 import com.diegorezm.dfinance.core.domain.DataError
@@ -14,10 +15,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class DefaultBankAccountRepository(
-    db: DFinanceDatabase
+    private val db: DFinanceDatabase
 ) : BankAccountRepository {
 
     private val queries = db.bankAccountQueries
+    private val transactionsQueries = db.transactionQueries
 
     override fun findAll(): Flow<List<BankAccount>> {
         return queries.findAll()
@@ -29,23 +31,21 @@ class DefaultBankAccountRepository(
                         id = entity.id,
                         name = entity.name,
                         currencyCode = entity.currency_code,
-                        balance = entity.balance,
-                        icon = entity.icon,
                         color = entity.color
                     )
                 }
             }
     }
 
-    override suspend fun create(account: BankAccount): EmptyResult<DataError.Local> {
+    override suspend fun create(account: BankAccountDTO): EmptyResult<DataError.Local> {
         return try {
-            queries.insert(
-                name = account.name,
-                currency_code = account.currencyCode,
-                balance = account.balance,
-                icon = account.icon,
-                color = account.color
-            )
+            db.transaction {
+                queries.insert(
+                    name = account.name,
+                    currency_code = account.currencyCode,
+                    color = account.color
+                )
+            }
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(DataError.Local.UNKNOWN)
@@ -54,12 +54,10 @@ class DefaultBankAccountRepository(
 
     override suspend fun update(account: BankAccount): EmptyResult<DataError.Local> {
         return try {
-            val id = account.id ?: return Result.Error(DataError.Local.NOT_FOUND)
+            val id = account.id
             queries.update(
                 name = account.name,
                 currency_code = account.currencyCode,
-                balance = account.balance,
-                icon = account.icon,
                 color = account.color,
                 id = id
             )
