@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.Transaction
 import com.diegorezm.dfinance.transactions.domain.TransactionType
 import dfinance.composeapp.generated.resources.Res
@@ -36,6 +38,7 @@ import dfinance.composeapp.generated.resources.chart_title
 import dfinance.composeapp.generated.resources.no_chart_data
 import dfinance.composeapp.generated.resources.type_expense
 import dfinance.composeapp.generated.resources.type_income
+import dfinance.composeapp.generated.resources.type_savings
 import ir.ehsannarmani.compose_charts.ColumnChart
 import ir.ehsannarmani.compose_charts.models.BarProperties
 import ir.ehsannarmani.compose_charts.models.Bars
@@ -43,11 +46,11 @@ import ir.ehsannarmani.compose_charts.models.GridProperties
 import ir.ehsannarmani.compose_charts.models.HorizontalIndicatorProperties
 import ir.ehsannarmani.compose_charts.models.IndicatorCount
 import ir.ehsannarmani.compose_charts.models.LabelProperties
-import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
 private val incomeColor = Color(0xFF4CAF50)
 private val expenseColor = Color(0xFFF44336)
+private val savingColor = Color(0xFF2196F3)
 
 @Composable
 fun TransactionChartSection(
@@ -57,9 +60,10 @@ fun TransactionChartSection(
 ) {
     val incomeLabel = stringResource(Res.string.type_income)
     val expenseLabel = stringResource(Res.string.type_expense)
-    
-    val chartData = remember(transactions, incomeLabel, expenseLabel) {
-        buildChartData(transactions, incomeLabel, expenseLabel)
+    val savingLabel = stringResource(Res.string.type_savings) // TODO: Add to resources
+
+    val chartData = remember(transactions, incomeLabel, expenseLabel, savingLabel) {
+        buildChartData(transactions, incomeLabel, expenseLabel, savingLabel)
     }
 
     Column(
@@ -84,43 +88,19 @@ fun TransactionChartSection(
                 color = MaterialTheme.colorScheme.onSurface
             )
             Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Legend
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    androidx.compose.foundation.layout.Box(
-                        modifier = Modifier
-                            .size(10.dp)
-                            .background(incomeColor)
-                    )
-                    Text(
-                        text = stringResource(Res.string.type_income),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    androidx.compose.foundation.layout.Box(
-                        modifier = Modifier
-                            .size(10.dp)
-                            .background(expenseColor)
-                    )
-                    Text(
-                        text = stringResource(Res.string.type_expense),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                LegendItem(incomeColor, incomeLabel)
+                LegendItem(expenseColor, expenseLabel)
+                LegendItem(savingColor, savingLabel)
+
                 Icon(
                     imageVector = if (expanded) Icons.Default.ArrowDropDown else Icons.Default.KeyboardArrowUp,
-                    contentDescription = if (expanded) stringResource(Res.string.chart_collapse) else stringResource(Res.string.chart_expand),
+                    contentDescription = if (expanded) stringResource(Res.string.chart_collapse) else stringResource(
+                        Res.string.chart_expand
+                    ),
                     modifier = Modifier.size(20.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -152,7 +132,7 @@ fun TransactionChartSection(
                     data = remember(chartData) { chartData },
                     barProperties = BarProperties(
                         spacing = 4.dp,
-                        thickness = 16.dp
+                        thickness = 12.dp
                     ),
                     gridProperties = GridProperties(
                         enabled = true,
@@ -177,10 +157,30 @@ fun TransactionChartSection(
     }
 }
 
+@Composable
+private fun LegendItem(color: Color, label: String) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(8.dp)
+                .background(color)
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
 private fun buildChartData(
     transactions: List<Transaction>,
     incomeLabel: String,
-    expenseLabel: String
+    expenseLabel: String,
+    savingLabel: String
 ): List<Bars> {
     // Group transactions by "YYYY-MM"
     val grouped = transactions
@@ -198,7 +198,12 @@ private fun buildChartData(
             .toDouble() / 100.0
 
         val expenses = txs
-            .filter { it.type == TransactionType.EXPENSE }
+            .filter { it.type == TransactionType.EXPENSE && it.budgetBucket != BudgetBucket.SAVING }
+            .sumOf { it.amount }
+            .toDouble() / 100.0
+
+        val savings = txs
+            .filter { it.type == TransactionType.EXPENSE && it.budgetBucket == BudgetBucket.SAVING }
             .sumOf { it.amount }
             .toDouble() / 100.0
 
@@ -215,6 +220,11 @@ private fun buildChartData(
                     label = expenseLabel,
                     value = expenses,
                     color = SolidColor(expenseColor)
+                ),
+                Bars.Data(
+                    label = savingLabel,
+                    value = savings,
+                    color = SolidColor(savingColor)
                 )
             )
         )

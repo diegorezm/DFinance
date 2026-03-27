@@ -4,6 +4,7 @@ import com.diegorezm.dfinance.core.domain.DataError
 import com.diegorezm.dfinance.core.domain.EmptyResult
 import com.diegorezm.dfinance.core.domain.Result
 import com.diegorezm.dfinance.transactions.data.dto.TransactionDTO
+import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.Transaction
 import com.diegorezm.dfinance.transactions.domain.TransactionRepository
 import kotlinx.coroutines.flow.Flow
@@ -45,6 +46,13 @@ class LocalTransactionRepository : TransactionRepository {
         }
     }
 
+    override fun findByBudgetBucket(bucket: BudgetBucket): Flow<List<Transaction>> {
+        return _transactions.map { list ->
+            list.filter { it.budgetBucket == bucket }
+                .sortedByDescending { it.date }
+        }
+    }
+
     override suspend fun create(dto: TransactionDTO): EmptyResult<DataError.Local> {
         val transaction = Transaction(
             id = nextId++,
@@ -54,7 +62,8 @@ class LocalTransactionRepository : TransactionRepository {
             type = dto.type,
             amount = dto.amount,
             note = dto.note,
-            date = dto.date
+            date = dto.date,
+            budgetBucket = dto.budgetBucket
         )
         _transactions.update { it + transaction }
         return Result.Success(Unit)
@@ -76,7 +85,8 @@ class LocalTransactionRepository : TransactionRepository {
                         type = dto.type,
                         amount = dto.amount,
                         note = dto.note,
-                        date = dto.date
+                        date = dto.date,
+                        budgetBucket = dto.budgetBucket
                     )
                 } else it
             }

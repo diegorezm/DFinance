@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.theme.DFinanceTheme
+import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.Transaction
 import com.diegorezm.dfinance.transactions.domain.TransactionType
 import dfinance.composeapp.generated.resources.Res
@@ -119,17 +120,25 @@ fun TransactionItem(
             Res.string.type_income
         )
 
-        TransactionType.EXPENSE -> Quintuple(
-            Icons.Default.KeyboardArrowDown,
-            Color(0xFFF44336),
-            Color(0xFFF44336),
-            "-",
-            Res.string.type_expense
-        )
+        TransactionType.EXPENSE -> {
+            val expenseColor = when (transaction.budgetBucket) {
+                BudgetBucket.SAVING -> Color(0xFF2196F3) // Blue for savings
+                BudgetBucket.WANT -> Color(0xFFFF9800)   // Orange for wants
+                BudgetBucket.NEED -> Color(0xFFF44336)   // Red for needs
+                null -> Color(0xFFF44336)
+            }
+            Quintuple(
+                Icons.Default.KeyboardArrowDown,
+                expenseColor,
+                expenseColor,
+                "-",
+                Res.string.type_expense
+            )
+        }
 
         TransactionType.TRANSFER -> Quintuple(
             Icons.Default.PlayArrow,
-            Color(0xFF2196F3),
+            Color(0xFF9C27B0), // Purple for transfers
             MaterialTheme.colorScheme.onSurface,
             "",
             Res.string.type_transfer
@@ -174,12 +183,20 @@ fun TransactionItem(
                             .border(2.dp, iconBg),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            imageVector = icon,
-                            contentDescription = stringResource(labelRes),
-                            tint = iconBg,
-                            modifier = Modifier.size(20.dp)
-                        )
+                        if (transaction.type == TransactionType.EXPENSE && transaction.budgetBucket != null) {
+                            BudgetBucketIcon(
+                                bucket = transaction.budgetBucket,
+                                tint = iconBg,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        } else {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = stringResource(labelRes),
+                                tint = iconBg,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.width(12.dp))
@@ -187,7 +204,11 @@ fun TransactionItem(
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = stringResource(labelRes),
+                                text = if (transaction.type == TransactionType.EXPENSE && transaction.budgetBucket != null) {
+                                    transaction.budgetBucket.name.lowercase().replaceFirstChar { it.uppercase() }
+                                } else {
+                                    stringResource(labelRes)
+                                },
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -282,7 +303,8 @@ private fun TransactionItemPreview() {
                     type = TransactionType.INCOME,
                     amount = 120050,
                     note = "Salary for March",
-                    date = "2024-03-20T10:00:00"
+                    date = "2024-03-20T10:00:00",
+                    budgetBucket = null
                 ),
                 onClick = {},
                 onDeleteClick = {}

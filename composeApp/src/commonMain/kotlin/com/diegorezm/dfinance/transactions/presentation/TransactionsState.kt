@@ -1,6 +1,7 @@
 package com.diegorezm.dfinance.transactions.presentation
 
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
+import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.Transaction
 import com.diegorezm.dfinance.transactions.domain.TransactionType
 import kotlinx.datetime.LocalDate
@@ -30,7 +31,12 @@ data class TransactionsState(
 
     val totalExpenses: Long
         get() = transactions
-            .filter { it.type == TransactionType.EXPENSE || it.type == TransactionType.TRANSFER }
+            .filter { (it.type == TransactionType.EXPENSE && it.budgetBucket != BudgetBucket.SAVING) || it.type == TransactionType.TRANSFER }
+            .sumOf { it.amount }
+
+    val totalSavings: Long
+        get() = transactions
+            .filter { it.type == TransactionType.EXPENSE && it.budgetBucket == BudgetBucket.SAVING }
             .sumOf { it.amount }
 
     val isDateFiltered: Boolean

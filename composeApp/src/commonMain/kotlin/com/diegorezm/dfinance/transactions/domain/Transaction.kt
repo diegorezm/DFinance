@@ -8,5 +8,6 @@ data class Transaction(
     val type: TransactionType,
     val amount: Long,
     val note: String?,
-    val date: String
+    val date: String,
+    val budgetBucket: BudgetBucket?
 )

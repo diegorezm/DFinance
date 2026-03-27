@@ -1,13 +1,12 @@
 package com.diegorezm.dfinance.core.presentation.components
 
-import androidx.compose.foundation.BorderStroke
+import BaselineAccountBalance
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -38,7 +37,11 @@ data class NavigationItem(
 
 val navigationItems = listOf(
     NavigationItem(Res.string.nav_home, Icons.Default.Home, Route.Home),
-    NavigationItem(Res.string.nav_accounts, Icons.Default.ShoppingCart, Route.BankAccounts),
+    NavigationItem(
+        Res.string.nav_accounts,
+        BaselineAccountBalance,
+        Route.BankAccounts
+    ),
     NavigationItem(Res.string.nav_settings, Icons.Default.Settings, Route.AppSettings)
 )
 
@@ -90,7 +93,7 @@ fun AppBottomNavigation(
                     indicatorColor = MaterialTheme.colorScheme.background
                 ),
 
-            )
+                )
         }
     }
 }

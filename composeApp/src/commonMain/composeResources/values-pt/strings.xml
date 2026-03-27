@@ -28,6 +28,7 @@
     <!-- Transaction Types -->
     <string name="type_income">Receita</string>
     <string name="type_expense">Despesa</string>
+    <string name="type_savings">Poupança</string>
     <string name="type_transfer">Transferência</string>
     <string name="type_initial_balance">Saldo Inicial</string>
     <string name="type_all">Tudo</string>
@@ -66,4 +67,5 @@
     <string name="no_chart_data">Nenhum dado para exibir ainda.</string>
     <string name="chart_expand">Expandir</string>
     <string name="chart_collapse">Recolher</string>
+
 </resources>

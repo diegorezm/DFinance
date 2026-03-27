@@ -30,6 +30,7 @@ fun AccountSummaryCard(
     account: BankAccount,
     totalIncome: Long,
     totalExpenses: Long,
+    totalSavings: Long,
     modifier: Modifier = Modifier
 ) {
     val accentColor = account.color.toComposeColor()
@@ -56,8 +57,9 @@ fun AccountSummaryCard(
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                // Income
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = "Income",
@@ -71,12 +73,10 @@ fun AccountSummaryCard(
                         color = Color(0xFF4CAF50)
                     )
                 }
-                Spacer(
-                    modifier = Modifier
-                        .width(1.dp)
-                        .height(32.dp)
-                        .background(MaterialTheme.colorScheme.outline)
-                )
+                
+                VerticalDivider()
+
+                // Expenses
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = "Expenses",
@@ -90,9 +90,36 @@ fun AccountSummaryCard(
                         color = Color(0xFFF44336)
                     )
                 }
+
+                VerticalDivider()
+
+                // Savings
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Savings",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = totalSavings.toDisplayAmount(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF2196F3)
+                    )
+                }
             }
         }
     }
+}
+
+@Composable
+private fun VerticalDivider() {
+    Spacer(
+        modifier = Modifier
+            .width(1.dp)
+            .height(32.dp)
+            .background(MaterialTheme.colorScheme.outline)
+    )
 }
 
 fun String.toComposeColor(): Color = try {
@@ -114,7 +141,8 @@ private fun AccountSummaryCardPreview() {
                     color = "#E8844A"
                 ),
                 totalIncome = 250000,
-                totalExpenses = 100000
+                totalExpenses = 100000,
+                totalSavings = 50000
             )
         }
     }

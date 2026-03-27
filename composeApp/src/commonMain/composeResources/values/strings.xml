@@ -28,6 +28,7 @@
     <!-- Transaction Types -->
     <string name="type_income">Income</string>
     <string name="type_expense">Expense</string>
+    <string name="type_savings">Savings</string>
     <string name="type_transfer">Transfer</string>
     <string name="type_initial_balance">Initial Balance</string>
     <string name="type_all">All</string>
@@ -62,7 +63,7 @@
 
     <!-- Home Screen -->
     <string name="total_net_worth">Total Net Worth</string>
-    <string name="chart_title">Income vs expenses</string>
+    <string name="chart_title">Monthly Flow</string>
     <string name="no_chart_data">No data to display yet.</string>
     <string name="chart_expand">Expand</string>
     <string name="chart_collapse">Collapse</string>

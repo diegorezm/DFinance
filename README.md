@@ -4,18 +4,17 @@
 
 ### Accounts
 
-- [ ] Create and manage multiple accounts (cash, bank, credit card — each with name, type, currency,
+- [x] Create and manage multiple accounts (cash, bank, credit card — each with name, type, currency,
   and initial balance)
-- [ ] Account balance overview (total net worth derived from all accounts combined)
-- [ ] Account balance history chart (line chart showing each account's balance over time)
+- [x] Account balance overview (total net worth derived from all accounts combined)
+- [x] Account balance history chart (line chart showing each account's balance over time)
 
 ### Transactions
 
-- [ ] Add / edit / delete transactions (amount, date, account, category, optional note)
-- [ ] Transaction types: income, expense, transfer (transfers move money between accounts without
+- [x] Add / edit / delete transactions (amount, date, account, category, optional note)
+- [x] Transaction types: income, expense, transfer (transfers move money between accounts without
   affecting totals)
-- [ ] Categories and subcategories (user-defined hierarchy, e.g. Food > Groceries, Food > Dining
-  out)
+- [ ] Categories
 - [ ] Recurring transactions (define frequency: daily, weekly, monthly, yearly — auto-create future
   entries or remind user)
 - [ ] Transaction list with filters (filter by account, category, date range, type)

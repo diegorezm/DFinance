@@ -14,6 +14,7 @@ interface TransactionRepository {
         startDate: String,
         endDate: String
     ): Flow<List<Transaction>>
+    fun findByBudgetBucket(bucket: BudgetBucket): Flow<List<Transaction>>
 
     suspend fun create(dto: TransactionDTO): EmptyResult<DataError.Local>
     suspend fun update(id: Long, dto: TransactionDTO): EmptyResult<DataError.Local>

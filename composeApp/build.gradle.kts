@@ -61,7 +61,8 @@ kotlin {
             implementation(libs.kotlinx.datetime)
 
             implementation(libs.charts)
-
+            implementation(libs.multiplatform.settings)
+            implementation(libs.multiplatform.settings.coroutines)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

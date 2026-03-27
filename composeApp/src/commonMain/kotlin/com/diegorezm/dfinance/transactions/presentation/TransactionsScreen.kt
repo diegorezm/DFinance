@@ -128,7 +128,8 @@ fun TransactionsScreen(
                             AccountSummaryCard(
                                 account = account,
                                 totalIncome = state.totalIncome,
-                                totalExpenses = state.totalExpenses
+                                totalExpenses = state.totalExpenses,
+                                totalSavings = state.totalSavings
                             )
                         }
                     }

@@ -1,5 +1,6 @@
 package com.diegorezm.dfinance.bank_accounts.presentation.components
 
+import BaselineAccountBalance
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
@@ -17,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -130,7 +130,7 @@ fun BankAccountItem(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.ShoppingCart,
+                    imageVector = BaselineAccountBalance,
                     contentDescription = null,
                     tint = accentColor,
                     modifier = Modifier.size(28.dp)

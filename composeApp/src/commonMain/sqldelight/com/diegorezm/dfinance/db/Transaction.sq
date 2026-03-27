@@ -1,12 +1,12 @@
 CREATE TABLE TransactionEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     account_id INTEGER NOT NULL REFERENCES BankAccountEntity(id),
-    subcategory_id INTEGER REFERENCES SubcategoryEntity(id),
     to_account_id INTEGER REFERENCES BankAccountEntity(id),
     type TEXT NOT NULL,
     amount INTEGER NOT NULL,
     note TEXT,
     date TEXT NOT NULL DEFAULT (datetime('now')),
+    budget_bucket TEXT, -- "NEED", "WANT", or "SAVING"
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),
     deleted_at TEXT
@@ -33,14 +33,17 @@ findByAccountIdAndMonth:
 SELECT * FROM TransactionEntity
 WHERE account_id = ? AND date LIKE ? || '%' AND deleted_at IS NULL ORDER BY date DESC;
 
+findByBudgetBucket:
+SELECT * FROM TransactionEntity
+WHERE budget_bucket = ? AND deleted_at IS NULL ORDER BY date DESC;
 
 insert:
-INSERT INTO TransactionEntity(account_id, subcategory_id, to_account_id, type, amount, note, date)
+INSERT INTO TransactionEntity(account_id, to_account_id, type, amount, note, date, budget_bucket)
 VALUES (?, ?, ?, ?, ?, ?, ?);
 
 update:
 UPDATE TransactionEntity
-SET subcategory_id = ?, type = ?, amount = ?, note = ?, date = ?, updated_at = datetime('now')
+SET  type = ?, amount = ?, note = ?, date = ?, budget_bucket = ?, updated_at = datetime('now')
 WHERE id = ?;
 
 softDelete:

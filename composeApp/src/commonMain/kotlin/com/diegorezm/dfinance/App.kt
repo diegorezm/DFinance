@@ -5,14 +5,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.entryProvider
@@ -20,6 +17,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.diegorezm.dfinance.bank_accounts.presentation.BankAccountsScreen
 import com.diegorezm.dfinance.core.presentation.components.AppBottomNavigation
 import com.diegorezm.dfinance.home.presentation.HomeScreen
+import com.diegorezm.dfinance.settings.presentation.SettingsScreen
 import com.diegorezm.dfinance.theme.DFinanceTheme
 import com.diegorezm.dfinance.transactions.presentation.TransactionsScreen
 import com.diegorezm.dfinance.transactions.presentation.TransactionsViewModel
@@ -88,12 +86,7 @@ fun App() {
                         })
                     }
                     entry<Route.AppSettings> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("App Settings Screen")
-                        }
+                        SettingsScreen()
                     }
                 }
             )

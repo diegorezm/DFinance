@@ -2,13 +2,16 @@ package com.diegorezm.dfinance.transactions.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -28,13 +31,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
 import com.diegorezm.dfinance.bank_accounts.presentation.components.toDisplayAmount
 import com.diegorezm.dfinance.transactions.data.dto.TransactionDTO
+import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.TransactionType
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.amount_label
@@ -42,6 +48,7 @@ import dfinance.composeapp.generated.resources.amount_placeholder
 import dfinance.composeapp.generated.resources.cancel
 import dfinance.composeapp.generated.resources.note_label
 import dfinance.composeapp.generated.resources.note_placeholder
+import dfinance.composeapp.generated.resources.transfer_to_label
 import dfinance.composeapp.generated.resources.type_expense
 import dfinance.composeapp.generated.resources.type_income
 import dfinance.composeapp.generated.resources.type_label
@@ -60,6 +67,7 @@ fun TransactionForm(
     initialType: TransactionType = TransactionType.EXPENSE,
     initialNote: String = "",
     initialToAccountId: Long? = null,
+    initialBudgetBucket: BudgetBucket? = null,
     submitLabel: String,
     onDismiss: () -> Unit,
     onSubmit: (TransactionDTO) -> Unit
@@ -72,11 +80,14 @@ fun TransactionForm(
     var toAccountId by remember { mutableStateOf(initialToAccountId) }
     var toAccountExpanded by remember { mutableStateOf(false) }
 
+    var selectedBudgetBucket by remember { mutableStateOf(initialBudgetBucket) }
+
     val otherAccounts = accounts.filter { it.id != accountId }
 
     val canSubmit = amountText.isNotBlank() &&
             amountText.toDoubleOrNull() != null &&
-            (selectedType != TransactionType.TRANSFER || toAccountId != null)
+            (selectedType != TransactionType.TRANSFER || toAccountId != null) &&
+            (selectedType != TransactionType.EXPENSE || selectedBudgetBucket != null)
 
     Column(
         modifier = Modifier
@@ -188,11 +199,65 @@ fun TransactionForm(
             }
         }
 
+        // Budget Bucket (if Expense)
+        if (selectedType == TransactionType.EXPENSE) {
+            Column {
+                Text(
+                    text = "Budget Bucket",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    BudgetBucket.entries.forEach { bucket ->
+                        val isSelected = selectedBudgetBucket == bucket
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .border(2.dp, MaterialTheme.colorScheme.outline)
+                                .background(
+                                    if (isSelected) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.surface
+                                )
+                                .clickable { selectedBudgetBucket = bucket }
+                                .padding(vertical = 12.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                BudgetBucketIcon(
+                                    bucket = bucket,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                                    else MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = bucket.name,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                                    else MaterialTheme.colorScheme.onSurface,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // Destination Account (if Transfer)
         if (selectedType == TransactionType.TRANSFER) {
             Column {
                 Text(
-                    text = "Transfer to", // TODO: Add to resources
+                    text = stringResource(Res.string.transfer_to_label),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.Bold
@@ -312,7 +377,8 @@ fun TransactionForm(
                             amount = amount,
                             note = note.trim().ifBlank { null },
                             date = Clock.System.now()
-                                .toLocalDateTime(TimeZone.currentSystemDefault()).toString()
+                                .toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
+                            budgetBucket = if (selectedType == TransactionType.EXPENSE) selectedBudgetBucket else null
                         )
                     )
                 },

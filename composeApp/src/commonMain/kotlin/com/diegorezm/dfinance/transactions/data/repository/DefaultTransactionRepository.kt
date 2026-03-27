@@ -7,6 +7,7 @@ import com.diegorezm.dfinance.core.domain.EmptyResult
 import com.diegorezm.dfinance.core.domain.Result
 import com.diegorezm.dfinance.db.DFinanceDatabase
 import com.diegorezm.dfinance.transactions.data.dto.TransactionDTO
+import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.Transaction
 import com.diegorezm.dfinance.transactions.domain.TransactionRepository
 import com.diegorezm.dfinance.transactions.domain.TransactionType
@@ -46,27 +47,33 @@ class DefaultTransactionRepository(private val db: DFinanceDatabase) : Transacti
             .mapToList(Dispatchers.IO)
             .map { list -> list.map { it.toDomain() } }
 
+    override fun findByBudgetBucket(bucket: BudgetBucket): Flow<List<Transaction>> =
+        queries.findByBudgetBucket(bucket.name)
+            .asFlow()
+            .mapToList(Dispatchers.IO)
+            .map { list -> list.map { it.toDomain() } }
+
     override suspend fun create(dto: TransactionDTO): EmptyResult<DataError.Local> {
         return try {
             queries.insert(
                 account_id = dto.accountId,
-                subcategory_id = dto.subcategoryId,
                 to_account_id = dto.toAccountId,
                 type = dto.type.name,
                 amount = dto.amount,
                 note = dto.note,
-                date = dto.date
+                date = dto.date,
+                budget_bucket = dto.budgetBucket?.name
             )
 
             if (dto.type == TransactionType.TRANSFER && dto.toAccountId != null) {
                 queries.insert(
                     account_id = dto.toAccountId,
-                    subcategory_id = null,
                     to_account_id = dto.accountId,
                     type = TransactionType.INCOME.name,
                     amount = dto.amount,
                     note = dto.note,
-                    date = dto.date
+                    date = dto.date,
+                    budget_bucket = dto.budgetBucket?.name
                 )
                 recalculateBalance(dto.toAccountId)
             }
@@ -81,11 +88,11 @@ class DefaultTransactionRepository(private val db: DFinanceDatabase) : Transacti
     override suspend fun update(id: Long, dto: TransactionDTO): EmptyResult<DataError.Local> {
         return try {
             queries.update(
-                subcategory_id = dto.subcategoryId,
                 type = dto.type.name,
                 amount = dto.amount,
                 note = dto.note,
                 date = dto.date,
+                budget_bucket = dto.budgetBucket?.name,
                 id = id
             )
             recalculateBalance(dto.accountId)
@@ -125,11 +132,12 @@ class DefaultTransactionRepository(private val db: DFinanceDatabase) : Transacti
         Transaction(
             id = id,
             accountId = account_id,
-            subcategoryId = subcategory_id,
+            subcategoryId = null, // Note: subcategory_id was removed/missing in Entity in some versions?
             toAccountId = to_account_id,
             type = TransactionType.fromString(type),
             amount = amount,
             note = note,
-            date = date
+            date = date,
+            budgetBucket = BudgetBucket.fromString(budget_bucket)
         )
 }

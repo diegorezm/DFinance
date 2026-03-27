@@ -3,6 +3,7 @@ package com.diegorezm.dfinance.home.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccountRepository
+import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.TransactionRepository
 import com.diegorezm.dfinance.transactions.domain.TransactionType
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +29,12 @@ class HomeViewModel(
             val balance = accountTransactions.sumOf { tx ->
                 when (tx.type) {
                     TransactionType.INCOME -> if (tx.accountId == account.id) tx.amount else 0L
-                    TransactionType.EXPENSE -> if (tx.accountId == account.id) -tx.amount else 0L
+                    TransactionType.EXPENSE -> {
+                        if (tx.accountId == account.id) {
+                            // Savings are considered positive for net worth/balance calculation
+                            if (tx.budgetBucket == BudgetBucket.SAVING) tx.amount else -tx.amount
+                        } else 0L
+                    }
                     TransactionType.TRANSFER -> {
                         when {
                             tx.accountId == account.id -> -tx.amount

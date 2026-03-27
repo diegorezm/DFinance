@@ -1,11 +1,10 @@
 package com.diegorezm.dfinance.bank_accounts.presentation.components
 
+import BaselineAccountBalance
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,7 +27,7 @@ fun BankAccountsEmptyState(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            imageVector = Icons.Default.ShoppingCart,
+            imageVector = BaselineAccountBalance,
             contentDescription = null,
             modifier = Modifier.size(48.dp),
             tint = MaterialTheme.colorScheme.outline

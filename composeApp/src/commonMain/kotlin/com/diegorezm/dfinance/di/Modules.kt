@@ -19,7 +19,7 @@ val sharedModule = module {
     single { Database(get()).instance }
     single<BankAccountRepository> { DefaultBankAccountRepository(get()) }
     single<TransactionRepository> { DefaultTransactionRepository(get()) }
-
+    
     viewModelOf(::BankAccountsViewModel)
     viewModelOf(::HomeViewModel)
 
