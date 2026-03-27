@@ -29,9 +29,12 @@ jobs:
       - name: Build Android RELEASE APK
         run: ./gradlew :composeApp:assembleRelease
 
+      - name: Rename Unsigned APK
+        run: mv composeApp/build/outputs/apk/release/*-unsigned.apk composeApp/build/outputs/apk/release/DFinance.apk
+
       - name: Publish Release with APK
         uses: softprops/action-gh-release@v2
         with:
-          files: composeApp/build/outputs/apk/release/composeApp-release.apk
+          files: composeApp/build/outputs/apk/release/DFinance.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
