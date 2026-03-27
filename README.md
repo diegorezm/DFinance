@@ -1,65 +1,26 @@
-# DFinance — feature todo
+# DFinance
 
-## v1
+![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
+![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)
+![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
+![iOS](https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=apple&logoColor=white)
 
-### Accounts
+Local and ad-free finances app that can be used anywhere.
 
-- [x] Create and manage multiple accounts (cash, bank, credit card — each with name, type, currency,
-  and initial balance)
-- [x] Account balance overview (total net worth derived from all accounts combined)
-- [x] Account balance history chart (line chart showing each account's balance over time)
+## The 50/30/20 Philosophy
 
-### Transactions
+DFinance is built around the 50/30/20 budgeting rule, originally popularized by Elizabeth Warren and
+Amelia Warren Tyagi. Instead of micromanaging every single coffee purchase with dozens of
+categories, your income is simply split into three actionable buckets:
 
-- [x] Add / edit / delete transactions (amount, date, account, category, optional note)
-- [x] Transaction types: income, expense, transfer (transfers move money between accounts without
-  affecting totals)
-- [ ] Categories
-- [ ] Recurring transactions (define frequency: daily, weekly, monthly, yearly — auto-create future
-  entries or remind user)
-- [ ] Transaction list with filters (filter by account, category, date range, type)
+* **50% Needs:** The non-negotiables (rent, groceries, utilities).
+* **30% Wants:** The fun stuff (dining out, hobbies, subscriptions).
+* **20% Savings:** Paying your future self (investments, emergency funds, debt payoff).
 
-### Budgeting
+# Previews
 
-- [ ] Monthly budget per category (set a spending limit for each category each month)
-- [ ] Budget vs actual tracking (real-time comparison of budgeted vs spent per category)
-- [ ] Rollover unspent budget (carry leftover amounts to the next month per category, toggleable per
-  category)
+![DFinance Logo](docs/assets/logo.png)
 
-### Savings goals
-
-- [ ] Create goals with target amount (name, target amount, optional deadline)
-- [ ] Manual progress updates (user logs contributions toward a goal manually)
-- [ ] Progress visualization (progress bar + % complete + amount remaining + projected completion
-  date)
-
-### Dashboard & reports
-
-- [ ] Spending by category (pie or bar chart for selected month)
-- [ ] Income vs expenses over time (bar chart grouped by month, showing net balance per month)
-- [ ] Budget vs actual summary (card-based overview of all categories for current month)
-
-### Data & portability
-
-- [ ] CSV export (export transactions with all fields, filterable by date range or account)
-- [ ] CSV import (map columns to dfinance fields, preview before confirming)
-
-### Architecture foundations
-
-- [ ] Local SQLite database via SQLDelight (schema designed with sync in mind: UUIDs as PKs,
-  `created_at` / `updated_at` / `deleted_at` on all tables)
-- [ ] Repository pattern in shared KMP module (data layer abstracted so a remote source can be
-  swapped in later)
-- [ ] Soft deletes (records marked `deleted_at` instead of hard-deleted, required for future sync
-  conflict resolution)
-
----
-
-## Future / post-v1
-
-- [ ] Self-hosted sync backend (conflict-free sync using the soft-delete + UUID schema already in
-  place)
-- [ ] iOS support (KMP shared logic already works — just add Compose Multiplatform iOS target)
-- [ ] Receipt photo attachments
-- [ ] Spending alerts / push notifications for recurring transactions
-- [ ] Bank statement import (OFX/QIF)
+![Home Screen](docs/assets/home_screen.png)
+![Transaction Form](docs/assets/add_transaction.png)
+![Settings & Charts](docs/assets/settings_charts.png)
