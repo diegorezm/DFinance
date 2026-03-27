@@ -4,6 +4,7 @@ import com.diegorezm.dfinance.bank_accounts.data.repositories.DefaultBankAccount
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccountRepository
 import com.diegorezm.dfinance.bank_accounts.presentation.BankAccountsViewModel
 import com.diegorezm.dfinance.db.Database
+import com.diegorezm.dfinance.home.presentation.HomeViewModel
 import com.diegorezm.dfinance.transactions.data.repository.DefaultTransactionRepository
 import com.diegorezm.dfinance.transactions.domain.TransactionRepository
 import com.diegorezm.dfinance.transactions.presentation.TransactionsViewModel
@@ -20,6 +21,7 @@ val sharedModule = module {
     single<TransactionRepository> { DefaultTransactionRepository(get()) }
 
     viewModelOf(::BankAccountsViewModel)
+    viewModelOf(::HomeViewModel)
 
     viewModel { params ->
         TransactionsViewModel(get(), get(), params.get())

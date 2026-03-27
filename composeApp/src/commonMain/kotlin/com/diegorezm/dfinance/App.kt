@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,13 +19,14 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.diegorezm.dfinance.bank_accounts.presentation.BankAccountsScreen
 import com.diegorezm.dfinance.core.presentation.components.AppBottomNavigation
+import com.diegorezm.dfinance.home.presentation.HomeScreen
 import com.diegorezm.dfinance.theme.DFinanceTheme
 import com.diegorezm.dfinance.transactions.presentation.TransactionsScreen
 import com.diegorezm.dfinance.transactions.presentation.TransactionsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-@Preview()
+@Preview
 @Composable
 fun App() {
     DFinanceTheme {
@@ -46,7 +46,7 @@ fun App() {
                     }
                 )
             }
-        ) { innerPadding ->
+        ) {
             NavDisplay(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -64,14 +64,11 @@ fun App() {
                 },
                 entryProvider = entryProvider {
                     entry<Route.Home> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("Home Screen")
-                            }
-                        }
+                        HomeScreen(
+                            onAccountClick = { accountId ->
+                                backStack.add(Route.Transactions(accountId))
+                            },
+                        )
                     }
                     entry<Route.BankAccounts> {
                         BankAccountsScreen(

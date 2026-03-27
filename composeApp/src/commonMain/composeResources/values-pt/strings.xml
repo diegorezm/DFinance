@@ -19,9 +19,11 @@
     <string name="color_label">Cor</string>
     <string name="create">Criar</string>
     <string name="unknown_error">Erro desconhecido</string>
-    <string name="nav_home">Principal</string>
+    <string name="nav_home">Início</string>
     <string name="nav_accounts">Contas</string>
     <string name="nav_settings">Configurações</string>
+    <string name="edit_account_title">Editar conta</string>
+    <string name="save">Salvar</string>
 
     <!-- Transaction Types -->
     <string name="type_income">Receita</string>
@@ -40,4 +42,28 @@
     <string name="back">Voltar</string>
     <string name="add_transaction">Nova transação</string>
     <string name="no_transactions">Nenhuma transação ainda.</string>
+    <string name="new_transaction_title">Nova transação</string>
+    <string name="edit_transaction_title">Editar transação</string>
+    <string name="amount_label">Valor</string>
+    <string name="amount_placeholder">0,00</string>
+    <string name="type_label">Tipo</string>
+    <string name="transfer_to_label">Transferir para</string>
+    <string name="select_account_placeholder">Selecionar conta</string>
+    <string name="note_label">Nota</string>
+    <string name="note_placeholder">ex: Compras</string>
+    <string name="date_label">Data</string>
+    <string name="current_month">Mês Atual</string>
+    <string name="select_date_range">Selecionar período</string>
+    <string name="selected_range">Período Selecionado</string>
+
+    <!-- Delete Transaction -->
+    <string name="delete_transaction_title">Excluir transação?</string>
+    <string name="delete_transaction_message">Esta transação será removida. Esta ação não pode ser desfeita.</string>
+
+    <!-- Home Screen -->
+    <string name="total_net_worth">Patrimônio Total</string>
+    <string name="chart_title">Receitas vs despesas</string>
+    <string name="no_chart_data">Nenhum dado para exibir ainda.</string>
+    <string name="chart_expand">Expandir</string>
+    <string name="chart_collapse">Recolher</string>
 </resources>

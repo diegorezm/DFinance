@@ -29,6 +29,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.transactions.domain.Transaction
 import com.diegorezm.dfinance.transactions.domain.TransactionType
+import dfinance.composeapp.generated.resources.Res
+import dfinance.composeapp.generated.resources.chart_collapse
+import dfinance.composeapp.generated.resources.chart_expand
+import dfinance.composeapp.generated.resources.chart_title
+import dfinance.composeapp.generated.resources.no_chart_data
+import dfinance.composeapp.generated.resources.type_expense
+import dfinance.composeapp.generated.resources.type_income
 import ir.ehsannarmani.compose_charts.ColumnChart
 import ir.ehsannarmani.compose_charts.models.BarProperties
 import ir.ehsannarmani.compose_charts.models.Bars
@@ -36,6 +43,8 @@ import ir.ehsannarmani.compose_charts.models.GridProperties
 import ir.ehsannarmani.compose_charts.models.HorizontalIndicatorProperties
 import ir.ehsannarmani.compose_charts.models.IndicatorCount
 import ir.ehsannarmani.compose_charts.models.LabelProperties
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 
 private val incomeColor = Color(0xFF4CAF50)
 private val expenseColor = Color(0xFFF44336)
@@ -46,8 +55,11 @@ fun TransactionChartSection(
     expanded: Boolean,
     onToggle: () -> Unit
 ) {
-    val chartData = remember(transactions) {
-        buildChartData(transactions)
+    val incomeLabel = stringResource(Res.string.type_income)
+    val expenseLabel = stringResource(Res.string.type_expense)
+    
+    val chartData = remember(transactions, incomeLabel, expenseLabel) {
+        buildChartData(transactions, incomeLabel, expenseLabel)
     }
 
     Column(
@@ -66,7 +78,7 @@ fun TransactionChartSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Income vs expenses",
+                text = stringResource(Res.string.chart_title),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -86,7 +98,7 @@ fun TransactionChartSection(
                             .background(incomeColor)
                     )
                     Text(
-                        text = "Income",
+                        text = stringResource(Res.string.type_income),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -101,14 +113,14 @@ fun TransactionChartSection(
                             .background(expenseColor)
                     )
                     Text(
-                        text = "Expenses",
+                        text = stringResource(Res.string.type_expense),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Icon(
                     imageVector = if (expanded) Icons.Default.ArrowDropDown else Icons.Default.KeyboardArrowUp,
-                    contentDescription = if (expanded) "Collapse" else "Expand",
+                    contentDescription = if (expanded) stringResource(Res.string.chart_collapse) else stringResource(Res.string.chart_expand),
                     modifier = Modifier.size(20.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -123,7 +135,7 @@ fun TransactionChartSection(
         ) {
             if (chartData.isEmpty()) {
                 Text(
-                    text = "No data to display yet.",
+                    text = stringResource(Res.string.no_chart_data),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
@@ -165,7 +177,11 @@ fun TransactionChartSection(
     }
 }
 
-private fun buildChartData(transactions: List<Transaction>): List<Bars> {
+private fun buildChartData(
+    transactions: List<Transaction>,
+    incomeLabel: String,
+    expenseLabel: String
+): List<Bars> {
     // Group transactions by "YYYY-MM"
     val grouped = transactions
         .filter { it.type == TransactionType.INCOME || it.type == TransactionType.EXPENSE }
@@ -191,12 +207,12 @@ private fun buildChartData(transactions: List<Transaction>): List<Bars> {
                 .takeLast(2),
             values = listOf(
                 Bars.Data(
-                    label = "Income",
+                    label = incomeLabel,
                     value = income,
                     color = SolidColor(incomeColor)
                 ),
                 Bars.Data(
-                    label = "Expenses",
+                    label = expenseLabel,
                     value = expenses,
                     color = SolidColor(expenseColor)
                 )

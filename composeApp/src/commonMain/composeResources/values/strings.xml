@@ -59,4 +59,11 @@
     <!-- Delete Transaction -->
     <string name="delete_transaction_title">Delete transaction?</string>
     <string name="delete_transaction_message">This transaction will be removed. This cannot be undone.</string>
+
+    <!-- Home Screen -->
+    <string name="total_net_worth">Total Net Worth</string>
+    <string name="chart_title">Income vs expenses</string>
+    <string name="no_chart_data">No data to display yet.</string>
+    <string name="chart_expand">Expand</string>
+    <string name="chart_collapse">Collapse</string>
 </resources>
