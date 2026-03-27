@@ -1,9 +1,15 @@
+<p align="center">
+    <img src="docs/assets/logo.png" alt="Logo" width="150" />
+</p>
+
 # DFinance
 
-![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
-![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)
-![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
-![iOS](https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=apple&logoColor=white)
+<p align="center">
+    <img src="https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin" />
+    <img src="https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite" />
+    <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android" />
+    <img src="https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="iOS" />
+</p>
 
 Local and ad-free finances app that can be used anywhere.
 
@@ -17,10 +23,10 @@ categories, your income is simply split into three actionable buckets:
 * **30% Wants:** The fun stuff (dining out, hobbies, subscriptions).
 * **20% Savings:** Paying your future self (investments, emergency funds, debt payoff).
 
-# Previews
+## Previews
 
-![DFinance Logo](docs/assets/logo.png)
-
-![Home Screen](docs/assets/home_screen.png)
-![Transaction Form](docs/assets/add_transaction.png)
-![Settings & Charts](docs/assets/settings_charts.png)
+<p align="center">
+  <img src="docs/assets/home_screen.png" alt="Home Screen" width="30%" />
+  <img src="docs/assets/add_transaction.png" alt="Transaction Form" width="30%" />
+  <img src="docs/assets/settings_charts.png" alt="Settings & Charts" width="30%" />
+</p>
