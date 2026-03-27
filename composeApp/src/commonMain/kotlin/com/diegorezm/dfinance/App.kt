@@ -7,6 +7,8 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -29,10 +31,14 @@ import org.koin.core.parameter.parametersOf
 fun App() {
     DFinanceTheme {
         val backStack = remember { mutableStateListOf<Route>(Route.Home) }
+        val snackbarHostState = remember { SnackbarHostState() }
         val currentRoute = backStack.lastOrNull()
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState)
+            },
             bottomBar = {
                 AppBottomNavigation(
                     currentRoute = currentRoute,
@@ -86,7 +92,9 @@ fun App() {
                         })
                     }
                     entry<Route.AppSettings> {
-                        SettingsScreen()
+                        SettingsScreen(
+                            snackbarHostState = snackbarHostState
+                        )
                     }
                 }
             )

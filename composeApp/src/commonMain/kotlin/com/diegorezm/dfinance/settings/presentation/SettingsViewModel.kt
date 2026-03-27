@@ -1,11 +1,16 @@
 package com.diegorezm.dfinance.settings.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.diegorezm.dfinance.settings.domain.ChartType
+import com.diegorezm.dfinance.settings.domain.SettingsKeys
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class SettingsViewModel(
     private val settings: Settings
@@ -19,16 +24,23 @@ class SettingsViewModel(
     }
 
     private fun loadSettings() {
-        val need = settings.getInt(KEY_NEED_PERCENTAGE, 50)
-        val want = settings.getInt(KEY_WANT_PERCENTAGE, 30)
-        val saving = settings.getInt(KEY_SAVING_PERCENTAGE, 20)
+        val need = settings.getInt(SettingsKeys.KEY_NEED_PERCENTAGE, 50)
+        val want = settings.getInt(SettingsKeys.KEY_WANT_PERCENTAGE, 30)
+        val saving = settings.getInt(SettingsKeys.KEY_SAVING_PERCENTAGE, 20)
+        val chartTypeString = settings.getString(SettingsKeys.KEY_CHART_TYPE, ChartType.BAR.name)
+        val chartType = try {
+            ChartType.valueOf(chartTypeString)
+        } catch (e: Exception) {
+            ChartType.BAR
+        }
 
         _state.update {
             it.copy(
                 needPercentage = need,
                 wantPercentage = want,
                 savingPercentage = saving,
-                totalPercentage = need + want + saving
+                totalPercentage = need + want + saving,
+                chartType = chartType
             )
         }
     }
@@ -59,20 +71,30 @@ class SettingsViewModel(
                     )
                 }
             }
+            is SettingsActions.OnChartTypeChange -> {
+                _state.update {
+                    it.copy(chartType = action.chartType)
+                }
+            }
             SettingsActions.OnSaveClick -> saveSettings()
+            SettingsActions.OnDismissSuccessMessage -> {
+                _state.update { it.copy(showSaveSuccess = false) }
+            }
         }
     }
 
     private fun saveSettings() {
         val currentState = _state.value
-        settings[KEY_NEED_PERCENTAGE] = currentState.needPercentage
-        settings[KEY_WANT_PERCENTAGE] = currentState.wantPercentage
-        settings[KEY_SAVING_PERCENTAGE] = currentState.savingPercentage
-    }
-
-    companion object {
-        const val KEY_NEED_PERCENTAGE = "need_percentage"
-        const val KEY_WANT_PERCENTAGE = "want_percentage"
-        const val KEY_SAVING_PERCENTAGE = "saving_percentage"
+        settings[SettingsKeys.KEY_NEED_PERCENTAGE] = currentState.needPercentage
+        settings[SettingsKeys.KEY_WANT_PERCENTAGE] = currentState.wantPercentage
+        settings[SettingsKeys.KEY_SAVING_PERCENTAGE] = currentState.savingPercentage
+        settings[SettingsKeys.KEY_CHART_TYPE] = currentState.chartType.name
+        
+        _state.update { it.copy(showSaveSuccess = true) }
+        
+        viewModelScope.launch {
+            delay(3000)
+            _state.update { it.copy(showSaveSuccess = false) }
+        }
     }
 }

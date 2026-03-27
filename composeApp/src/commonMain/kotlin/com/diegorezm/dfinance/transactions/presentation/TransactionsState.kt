@@ -1,6 +1,7 @@
 package com.diegorezm.dfinance.transactions.presentation
 
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
+import com.diegorezm.dfinance.settings.domain.ChartType
 import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.Transaction
 import com.diegorezm.dfinance.transactions.domain.TransactionType
@@ -18,7 +19,8 @@ data class TransactionsState(
     val isChartExpanded: Boolean = true,
     val selectedMonth: String? = null,
     val startDate: LocalDate? = null,
-    val endDate: LocalDate? = null
+    val endDate: LocalDate? = null,
+    val currentChartType: ChartType = ChartType.BAR
 ) {
     val filteredTransactions: List<Transaction>
         get() = if (activeFilters.isEmpty()) transactions

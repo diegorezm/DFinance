@@ -67,4 +67,21 @@
     <string name="no_chart_data">No data to display yet.</string>
     <string name="chart_expand">Expand</string>
     <string name="chart_collapse">Collapse</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="budget_targets_title">Budget Targets</string>
+    <string name="budget_targets_description">Set your monthly spending goals for each category.</string>
+    <string name="needs_label">Needs (%)</string>
+    <string name="wants_label">Wants (%)</string>
+    <string name="savings_label">Savings (%)</string>
+    <string name="total_label">Total: %1$d%%</string>
+    <string name="total_error">Total must be 100%</string>
+
+    <string name="chart_settings_title">Chart Display</string>
+    <string name="chart_settings_description">Choose the default chart type for your dashboard.</string>
+    <string name="chart_type_bar">Bar Chart</string>
+    <string name="chart_type_line">Line Chart</string>
+    <string name="chart_type_pie">Pie Chart</string>
+    <string name="settings_saved_success">Settings saved successfully!</string>
 </resources>

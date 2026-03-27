@@ -1,4 +1,7 @@
 package com.diegorezm.dfinance.settings.domain
 
-class SettingsFactory {
+import com.russhwolf.settings.Settings
+
+expect class SettingsFactory {
+    fun createSettings(): Settings
 }

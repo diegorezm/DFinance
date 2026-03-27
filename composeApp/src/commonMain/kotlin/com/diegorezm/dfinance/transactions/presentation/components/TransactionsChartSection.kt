@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.diegorezm.dfinance.settings.domain.ChartType
 import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.Transaction
 import com.diegorezm.dfinance.transactions.domain.TransactionType
@@ -40,12 +42,16 @@ import dfinance.composeapp.generated.resources.type_expense
 import dfinance.composeapp.generated.resources.type_income
 import dfinance.composeapp.generated.resources.type_savings
 import ir.ehsannarmani.compose_charts.ColumnChart
+import ir.ehsannarmani.compose_charts.LineChart
+import ir.ehsannarmani.compose_charts.PieChart
 import ir.ehsannarmani.compose_charts.models.BarProperties
 import ir.ehsannarmani.compose_charts.models.Bars
 import ir.ehsannarmani.compose_charts.models.GridProperties
 import ir.ehsannarmani.compose_charts.models.HorizontalIndicatorProperties
 import ir.ehsannarmani.compose_charts.models.IndicatorCount
 import ir.ehsannarmani.compose_charts.models.LabelProperties
+import ir.ehsannarmani.compose_charts.models.Line
+import ir.ehsannarmani.compose_charts.models.Pie
 import org.jetbrains.compose.resources.stringResource
 
 private val incomeColor = Color(0xFF4CAF50)
@@ -56,11 +62,12 @@ private val savingColor = Color(0xFF2196F3)
 fun TransactionChartSection(
     transactions: List<Transaction>,
     expanded: Boolean,
+    chartType: ChartType,
     onToggle: () -> Unit
 ) {
     val incomeLabel = stringResource(Res.string.type_income)
     val expenseLabel = stringResource(Res.string.type_expense)
-    val savingLabel = stringResource(Res.string.type_savings) // TODO: Add to resources
+    val savingLabel = stringResource(Res.string.type_savings)
 
     val chartData = remember(transactions, incomeLabel, expenseLabel, savingLabel) {
         buildChartData(transactions, incomeLabel, expenseLabel, savingLabel)
@@ -123,35 +130,109 @@ fun TransactionChartSection(
                         .fillMaxWidth()
                 )
             } else {
-                ColumnChart(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(220.dp)
                         .background(MaterialTheme.colorScheme.surface)
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    data = remember(chartData) { chartData },
-                    barProperties = BarProperties(
-                        spacing = 4.dp,
-                        thickness = 12.dp
-                    ),
-                    gridProperties = GridProperties(
-                        enabled = true,
-                        xAxisProperties = GridProperties.AxisProperties(enabled = false)
-                    ),
-                    indicatorProperties = HorizontalIndicatorProperties(
-                        enabled = true,
-                        textStyle = MaterialTheme.typography.labelSmall.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        ),
-                        count = IndicatorCount.CountBased(4)
-                    ),
-                    labelProperties = LabelProperties(
-                        enabled = true,
-                        textStyle = MaterialTheme.typography.labelSmall.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    )
-                )
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                ) {
+                    when (chartType) {
+                        ChartType.BAR -> {
+                            ColumnChart(
+                                modifier = Modifier.fillMaxSize(),
+                                data = remember(chartData) { chartData },
+                                barProperties = BarProperties(
+                                    spacing = 4.dp,
+                                    thickness = 12.dp
+                                ),
+                                gridProperties = GridProperties(
+                                    enabled = true,
+                                    xAxisProperties = GridProperties.AxisProperties(enabled = false)
+                                ),
+                                indicatorProperties = HorizontalIndicatorProperties(
+                                    enabled = true,
+                                    textStyle = MaterialTheme.typography.labelSmall.copy(
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    ),
+                                    count = IndicatorCount.CountBased(4)
+                                ),
+                                labelProperties = LabelProperties(
+                                    enabled = true,
+                                    textStyle = MaterialTheme.typography.labelSmall.copy(
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                )
+                            )
+                        }
+                        ChartType.LINE -> {
+                            val lineData = remember(chartData) {
+                                listOf(
+                                    Line(
+                                        label = incomeLabel,
+                                        values = chartData.map { it.values[0].value },
+                                        color = SolidColor(incomeColor),
+                                        firstGradientFillColor = incomeColor.copy(alpha = 0.2f),
+                                        secondGradientFillColor = Color.Transparent
+                                    ),
+                                    Line(
+                                        label = expenseLabel,
+                                        values = chartData.map { it.values[1].value },
+                                        color = SolidColor(expenseColor),
+                                        firstGradientFillColor = expenseColor.copy(alpha = 0.2f),
+                                        secondGradientFillColor = Color.Transparent
+                                    ),
+                                    Line(
+                                        label = savingLabel,
+                                        values = chartData.map { it.values[2].value },
+                                        color = SolidColor(savingColor),
+                                        firstGradientFillColor = savingColor.copy(alpha = 0.2f),
+                                        secondGradientFillColor = Color.Transparent
+                                    )
+                                )
+                            }
+                            LineChart(
+                                modifier = Modifier.fillMaxSize(),
+                                data = lineData,
+                                gridProperties = GridProperties(
+                                    enabled = true,
+                                    xAxisProperties = GridProperties.AxisProperties(enabled = false)
+                                ),
+                                indicatorProperties = HorizontalIndicatorProperties(
+                                    enabled = true,
+                                    textStyle = MaterialTheme.typography.labelSmall.copy(
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    ),
+                                    count = IndicatorCount.CountBased(4)
+                                ),
+                                labelProperties = LabelProperties(
+                                    enabled = true,
+                                    labels = chartData.map { it.label },
+                                    textStyle = MaterialTheme.typography.labelSmall.copy(
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                )
+                            )
+                        }
+                        ChartType.PIE -> {
+                            val totalIncome = chartData.sumOf { it.values[0].value }
+                            val totalExpenses = chartData.sumOf { it.values[1].value }
+                            val totalSavings = chartData.sumOf { it.values[2].value }
+                            
+                            val pieData = remember(totalIncome, totalExpenses, totalSavings) {
+                                listOf(
+                                    Pie(label = incomeLabel, data = totalIncome, color = incomeColor),
+                                    Pie(label = expenseLabel, data = totalExpenses, color = expenseColor),
+                                    Pie(label = savingLabel, data = totalSavings, color = savingColor)
+                                )
+                            }
+                            PieChart(
+                                modifier = Modifier.fillMaxSize(),
+                                data = pieData
+                            )
+                        }
+                    }
+                }
             }
         }
     }

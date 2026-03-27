@@ -140,7 +140,8 @@ fun TransactionsScreen(
                             expanded = state.filteredTransactions.isNotEmpty() && state.isChartExpanded,
                             onToggle = {
                                 viewModel.onAction(TransactionsActions.OnChartToggle)
-                            }
+                            },
+                            chartType = state.currentChartType
                         )
                     }
 

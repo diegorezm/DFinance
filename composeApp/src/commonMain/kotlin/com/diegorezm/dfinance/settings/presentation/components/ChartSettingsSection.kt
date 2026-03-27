@@ -3,21 +3,24 @@ package com.diegorezm.dfinance.settings.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.settings.domain.ChartType
@@ -36,59 +39,88 @@ fun ChartSettingsSection(
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val chartTypes = ChartType.entries
+    val pagerState = rememberPagerState(
+        initialPage = chartTypes.indexOf(selectedChartType),
+        pageCount = { chartTypes.size }
+    )
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            onAction(SettingsActions.OnChartTypeChange(chartTypes[page]))
+        }
+    }
+
     SettingsSection(
         title = stringResource(Res.string.chart_settings_title),
         description = stringResource(Res.string.chart_settings_description),
         modifier = modifier
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            ChartTypeOption(
-                label = stringResource(Res.string.chart_type_bar),
-                selected = selectedChartType == ChartType.BAR,
-                onClick = { onAction(SettingsActions.OnChartTypeChange(ChartType.BAR)) }
-            )
-            ChartTypeOption(
-                label = stringResource(Res.string.chart_type_line),
-                selected = selectedChartType == ChartType.LINE,
-                onClick = { onAction(SettingsActions.OnChartTypeChange(ChartType.LINE)) }
-            )
-            ChartTypeOption(
-                label = stringResource(Res.string.chart_type_pie),
-                selected = selectedChartType == ChartType.PIE,
-                onClick = { onAction(SettingsActions.OnChartTypeChange(ChartType.PIE)) }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            HorizontalPager(
+                state = pagerState,
+                contentPadding = PaddingValues(horizontal = 32.dp),
+                pageSpacing = 16.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) { page ->
+                val chartType = chartTypes[page]
+                val isSelected = selectedChartType == chartType
+
+                ChartPlaceholder(
+                    chartType = chartType,
+                    isSelected = isSelected,
+                    onClick = {
+                        // Optional: allow clicking to scroll to page if needed,
+                        // but HorizontalPager handles swipe already.
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = when (selectedChartType) {
+                    ChartType.BAR -> stringResource(Res.string.chart_type_bar)
+                    ChartType.LINE -> stringResource(Res.string.chart_type_line)
+                    ChartType.PIE -> stringResource(Res.string.chart_type_pie)
+                },
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
             )
         }
     }
 }
 
 @Composable
-private fun ChartTypeOption(
-    label: String,
-    selected: Boolean,
+private fun ChartPlaceholder(
+    chartType: ChartType,
+    isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
-            .border(2.dp, MaterialTheme.colorScheme.outline)
-            .clickable { onClick() }
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .aspectRatio(16f / 9f)
+            .background(
+                if (isSelected) MaterialTheme.colorScheme.surfaceVariant
+                else MaterialTheme.colorScheme.surface
+            )
+            .border(
+                width = if (isSelected) 4.dp else 2.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = RectangleShape
+            )
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier
-                .size(16.dp)
-                .background(if (selected) MaterialTheme.colorScheme.primary else Color.Transparent)
-                .border(2.dp, MaterialTheme.colorScheme.outline)
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+        // Call the natively drawn shapes!
+        Box(modifier = Modifier.padding(16.dp)) {
+            when (chartType) {
+                ChartType.BAR -> NeobrutalistBarChartPreview()
+                ChartType.LINE -> NeobrutalistLineChartPreview()
+                ChartType.PIE -> NeobrutalistPieChartPreview()
+            }
+        }
     }
 }

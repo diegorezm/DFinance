@@ -5,7 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccountRepository
 import com.diegorezm.dfinance.core.domain.onError
 import com.diegorezm.dfinance.core.domain.onSuccess
+import com.diegorezm.dfinance.settings.domain.ChartType
+import com.diegorezm.dfinance.settings.domain.SettingsKeys
 import com.diegorezm.dfinance.transactions.domain.TransactionRepository
+import com.russhwolf.settings.Settings
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,12 +17,14 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
 class TransactionsViewModel(
     private val transactionsRepository: TransactionRepository,
     private val bankRepository: BankAccountRepository,
+    private val settings: Settings,
     val bankId: Long
 ) : ViewModel() {
     private val _state = MutableStateFlow(TransactionsState())
@@ -28,8 +33,19 @@ class TransactionsViewModel(
         fetchAccounts()
         // Default to current month
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val currentMonth = "${now.year}-${now.monthNumber.toString().padStart(2, '0')}"
-        _state.value = _state.value.copy(selectedMonth = currentMonth)
+        val currentMonth = "${now.year}-${now.month.number.toString().padStart(2, '0')}"
+        
+        val chartTypeString = settings.getString(SettingsKeys.KEY_CHART_TYPE, ChartType.BAR.name)
+        val chartType = try {
+            ChartType.valueOf(chartTypeString)
+        } catch (e: Exception) {
+            ChartType.BAR
+        }
+
+        _state.value = _state.value.copy(
+            selectedMonth = currentMonth,
+            currentChartType = chartType
+        )
         fetchTransactions()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), _state.value)
 

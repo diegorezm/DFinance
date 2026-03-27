@@ -27,11 +27,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.bank_accounts.presentation.components.toComposeColor
 import com.diegorezm.dfinance.bank_accounts.presentation.components.toDisplayAmount
 import com.diegorezm.dfinance.core.presentation.components.NeobrutalistTopAppBar
+import com.diegorezm.dfinance.home.presentation.components.GoalProgressBar
 import com.diegorezm.dfinance.transactions.presentation.components.TransactionChartSection
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.accounts_title
@@ -72,8 +74,15 @@ fun HomeScreen(
                 TransactionChartSection(
                     transactions = state.transactions,
                     expanded = state.isChartExpanded,
+                    chartType = state.chartType,
                     onToggle = { viewModel.onAction(HomeActions.OnToggleChart) }
                 )
+            }
+
+            if (state.budgetGoals.isNotEmpty()) {
+                item {
+                    BudgetGoalsSection(goals = state.budgetGoals)
+                }
             }
 
             item {
@@ -97,6 +106,47 @@ fun HomeScreen(
             }
         }
     }
+}
+
+@Composable
+private fun BudgetGoalsSection(
+    goals: List<BudgetGoal>,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .offset(x = 4.dp, y = 4.dp)
+                .background(MaterialTheme.colorScheme.outline)
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface)
+                .border(2.dp, MaterialTheme.colorScheme.outline)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "Monthly Budget Goals",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold
+            )
+            goals.forEach { goal ->
+                GoalProgressBar(
+                    label = goal.label,
+                    spent = goal.spent,
+                    target = goal.target,
+                    color = Color(parseColor(goal.color))
+                )
+            }
+        }
+    }
+}
+
+private fun parseColor(hex: String): Int {
+    return hex.removePrefix("#").toLong(16).toInt() or -0x1000000
 }
 
 @Composable
