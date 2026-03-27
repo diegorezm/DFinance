@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
 import com.diegorezm.dfinance.bank_accounts.presentation.components.toDisplayAmount
 import com.diegorezm.dfinance.transactions.data.dto.TransactionDTO
 import com.diegorezm.dfinance.transactions.domain.TransactionType
@@ -54,9 +55,11 @@ import kotlin.time.Clock
 @Composable
 fun TransactionForm(
     accountId: Long,
+    accounts: List<BankAccount>,
     initialAmount: Long = 0,
     initialType: TransactionType = TransactionType.EXPENSE,
     initialNote: String = "",
+    initialToAccountId: Long? = null,
     submitLabel: String,
     onDismiss: () -> Unit,
     onSubmit: (TransactionDTO) -> Unit
@@ -66,7 +69,14 @@ fun TransactionForm(
     var note by remember { mutableStateOf(initialNote) }
     var typeExpanded by remember { mutableStateOf(false) }
 
-    val canSubmit = amountText.isNotBlank() && amountText.toDoubleOrNull() != null
+    var toAccountId by remember { mutableStateOf(initialToAccountId) }
+    var toAccountExpanded by remember { mutableStateOf(false) }
+
+    val otherAccounts = accounts.filter { it.id != accountId }
+
+    val canSubmit = amountText.isNotBlank() &&
+            amountText.toDoubleOrNull() != null &&
+            (selectedType != TransactionType.TRANSFER || toAccountId != null)
 
     Column(
         modifier = Modifier
@@ -178,6 +188,65 @@ fun TransactionForm(
             }
         }
 
+        // Destination Account (if Transfer)
+        if (selectedType == TransactionType.TRANSFER) {
+            Column {
+                Text(
+                    text = "Transfer to", // TODO: Add to resources
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                ExposedDropdownMenuBox(
+                    expanded = toAccountExpanded,
+                    onExpandedChange = { toAccountExpanded = it },
+                ) {
+                    OutlinedTextField(
+                        value = accounts.find { it.id == toAccountId }?.name ?: "Select account",
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = toAccountExpanded) },
+                        shape = RoundedCornerShape(0.dp),
+                        textStyle = MaterialTheme.typography.bodyMedium,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.outline,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onBackground
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable)
+                    )
+                    ExposedDropdownMenu(
+                        expanded = toAccountExpanded,
+                        onDismissRequest = { toAccountExpanded = false },
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                        shape = RoundedCornerShape(0.dp)
+                    ) {
+                        otherAccounts.forEach { account ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = account.name,
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                },
+                                onClick = {
+                                    toAccountId = account.id
+                                    toAccountExpanded = false
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.surface)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
         // Note
         Column {
             Text(
@@ -238,7 +307,7 @@ fun TransactionForm(
                         TransactionDTO(
                             accountId = accountId,
                             subcategoryId = null,
-                            toAccountId = null,
+                            toAccountId = if (selectedType == TransactionType.TRANSFER) toAccountId else null,
                             type = selectedType,
                             amount = amount,
                             note = note.trim().ifBlank { null },

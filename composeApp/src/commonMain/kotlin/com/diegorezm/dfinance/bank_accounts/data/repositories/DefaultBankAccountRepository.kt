@@ -37,6 +37,26 @@ class DefaultBankAccountRepository(
             }
     }
 
+    override fun findById(id: Long): Result<BankAccount, DataError.Local> {
+        return try {
+            val result = queries.findById(id).executeAsOneOrNull()
+            if (result != null) {
+                return Result.Success(
+                    BankAccount(
+                        id = result.id,
+                        name = result.name,
+                        currencyCode = result.currency_code,
+                        color = result.color
+                    )
+                )
+            }
+            Result.Error(DataError.Local.NOT_FOUND)
+        } catch (e: Exception) {
+            Result.Error(DataError.Local.UNKNOWN)
+        }
+
+    }
+
     override suspend fun create(account: BankAccountDTO): EmptyResult<DataError.Local> {
         return try {
             db.transaction {

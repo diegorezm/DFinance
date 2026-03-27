@@ -81,7 +81,9 @@ fun App() {
                         )
                     }
                     entry<Route.Transactions> { params ->
-                        val viewModel: TransactionsViewModel = koinViewModel {
+                        val viewModel: TransactionsViewModel = koinViewModel(
+                            key = "transactions_${params.bankId}"
+                        ) {
                             parametersOf(params.bankId)
                         }
                         TransactionsScreen(viewModel, onBackClick = {

@@ -47,9 +47,14 @@
     <string name="amount_label">Amount</string>
     <string name="amount_placeholder">0.00</string>
     <string name="type_label">Type</string>
+    <string name="transfer_to_label">Transfer to</string>
+    <string name="select_account_placeholder">Select account</string>
     <string name="note_label">Note</string>
     <string name="note_placeholder">e.g. Groceries</string>
     <string name="date_label">Date</string>
+    <string name="current_month">Current Month</string>
+    <string name="select_date_range">Select date range</string>
+    <string name="selected_range">Selected Range</string>
 
     <!-- Delete Transaction -->
     <string name="delete_transaction_title">Delete transaction?</string>

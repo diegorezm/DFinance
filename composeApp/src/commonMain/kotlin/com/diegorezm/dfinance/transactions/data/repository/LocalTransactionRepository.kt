@@ -27,9 +27,20 @@ class LocalTransactionRepository : TransactionRepository {
         }
     }
 
-    override fun findByMonth(month: String): Flow<List<Transaction>> {
+    override fun findByMonth(accountId: Long, month: String): Flow<List<Transaction>> {
         return _transactions.map { list ->
-            list.filter { it.date.startsWith(month) }
+            list.filter { it.accountId == accountId && it.date.startsWith(month) }
+                .sortedByDescending { it.date }
+        }
+    }
+
+    override fun findByDateBetween(
+        accountId: Long,
+        startDate: String,
+        endDate: String
+    ): Flow<List<Transaction>> {
+        return _transactions.map { list ->
+            list.filter { it.accountId == accountId && it.date in startDate..endDate }
                 .sortedByDescending { it.date }
         }
     }

@@ -30,10 +30,6 @@ class BankAccountsViewModel(
                 _state.update { it.copy(isCreateSheetOpen = true) }
             }
 
-            is BankAccountsActions.OnAccountClick -> {
-
-            }
-
             is BankAccountsActions.OnEditAccountClick -> {
                 _state.update { it.copy(editingAccount = action.account) }
             }
@@ -65,6 +61,8 @@ class BankAccountsViewModel(
                 }
                 _state.update { it.copy(editingAccount = null) }
             }
+
+            else -> {}
         }
     }
 

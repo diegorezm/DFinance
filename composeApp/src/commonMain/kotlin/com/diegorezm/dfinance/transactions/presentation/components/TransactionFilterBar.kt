@@ -13,9 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.diegorezm.dfinance.theme.DFinanceTheme
 import com.diegorezm.dfinance.transactions.domain.TransactionType
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.type_all
@@ -36,12 +34,13 @@ fun TransactionType?.labelRes(): StringResource = when (this) {
 }
 
 @Composable
-fun TransactionFilterBar(
+fun TransactionTypeFilterBar(
     filters: Set<TransactionType> = emptySet(),
-    onFilterSelected: (TransactionType?) -> Unit
+    onFilterSelected: (TransactionType?) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         filterOptions.forEach { option ->
@@ -72,15 +71,5 @@ fun TransactionFilterBar(
                     .padding(horizontal = 12.dp, vertical = 6.dp)
             )
         }
-    }
-}
-
-@Preview
-@Composable
-private fun TransactionFilterBarPreview() {
-    DFinanceTheme {
-        TransactionFilterBar(
-            onFilterSelected = {}
-        )
     }
 }

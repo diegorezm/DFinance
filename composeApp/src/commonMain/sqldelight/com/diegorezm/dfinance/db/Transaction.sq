@@ -23,13 +23,16 @@ findByMonth:
 SELECT * FROM TransactionEntity
 WHERE date LIKE ? || '%' AND deleted_at IS NULL ORDER BY date DESC;
 
+findByDateBetween:
+SELECT * FROM TransactionEntity
+WHERE account_id = ?
+  AND date BETWEEN ? AND ?
+ORDER BY date DESC;
+
 findByAccountIdAndMonth:
 SELECT * FROM TransactionEntity
 WHERE account_id = ? AND date LIKE ? || '%' AND deleted_at IS NULL ORDER BY date DESC;
 
-findVisible:
-SELECT * FROM TransactionEntity
-WHERE deleted_at IS NULL AND type != 'INITIAL_BALANCE' ORDER BY date DESC;
 
 insert:
 INSERT INTO TransactionEntity(account_id, subcategory_id, to_account_id, type, amount, note, date)

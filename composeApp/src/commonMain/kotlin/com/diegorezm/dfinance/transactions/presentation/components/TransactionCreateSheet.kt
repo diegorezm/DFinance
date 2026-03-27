@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
 import com.diegorezm.dfinance.transactions.data.dto.TransactionDTO
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.create
@@ -23,6 +24,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun TransactionCreateSheet(
     accountId: Long,
+    accounts: List<BankAccount>,
     onDismiss: () -> Unit,
     onConfirm: (TransactionDTO) -> Unit
 ) {
@@ -48,6 +50,7 @@ fun TransactionCreateSheet(
 
         TransactionForm(
             accountId = accountId,
+            accounts = accounts,
             submitLabel = stringResource(Res.string.create),
             onDismiss = onDismiss,
             onSubmit = onConfirm

@@ -30,8 +30,18 @@ class DefaultTransactionRepository(private val db: DFinanceDatabase) : Transacti
             .mapToList(Dispatchers.IO)
             .map { list -> list.map { it.toDomain() } }
 
-    override fun findByMonth(month: String): Flow<List<Transaction>> =
-        queries.findByMonth(month)
+    override fun findByMonth(accountId: Long, month: String): Flow<List<Transaction>> =
+        queries.findByAccountIdAndMonth(accountId, month)
+            .asFlow()
+            .mapToList(Dispatchers.IO)
+            .map { list -> list.map { it.toDomain() } }
+
+    override fun findByDateBetween(
+        accountId: Long,
+        startDate: String,
+        endDate: String
+    ): Flow<List<Transaction>> =
+        queries.findByDateBetween(accountId, startDate, endDate)
             .asFlow()
             .mapToList(Dispatchers.IO)
             .map { list -> list.map { it.toDomain() } }

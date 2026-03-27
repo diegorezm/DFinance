@@ -22,6 +22,6 @@ val sharedModule = module {
     viewModelOf(::BankAccountsViewModel)
 
     viewModel { params ->
-        TransactionsViewModel(get(), params.get())
+        TransactionsViewModel(get(), get(), params.get())
     }
 }

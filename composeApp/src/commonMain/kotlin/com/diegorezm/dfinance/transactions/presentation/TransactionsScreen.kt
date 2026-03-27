@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,10 +30,12 @@ import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.core.presentation.components.NeobrutalistBottomFloatingFAB
 import com.diegorezm.dfinance.core.presentation.components.NeobrutalistTopAppBar
 import com.diegorezm.dfinance.transactions.presentation.components.AccountSummaryCard
+import com.diegorezm.dfinance.transactions.presentation.components.TransactionChartSection
 import com.diegorezm.dfinance.transactions.presentation.components.TransactionCreateSheet
+import com.diegorezm.dfinance.transactions.presentation.components.TransactionDateFilter
 import com.diegorezm.dfinance.transactions.presentation.components.TransactionEditSheet
-import com.diegorezm.dfinance.transactions.presentation.components.TransactionFilterBar
 import com.diegorezm.dfinance.transactions.presentation.components.TransactionItem
+import com.diegorezm.dfinance.transactions.presentation.components.TransactionTypeFilterBar
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.add_first_account
 import dfinance.composeapp.generated.resources.no_transactions
@@ -52,6 +55,7 @@ fun TransactionsScreen(
     if (state.isCreateSheetOpen) {
         TransactionCreateSheet(
             accountId = viewModel.bankId,
+            accounts = state.accounts,
             onDismiss = {
                 viewModel.onAction(TransactionsActions.OnDismissCreateSheet)
             },
@@ -64,6 +68,7 @@ fun TransactionsScreen(
     state.editingTransaction?.let { transaction ->
         TransactionEditSheet(
             transaction = transaction,
+            accounts = state.accounts,
             onDismiss = {
                 viewModel.onAction(TransactionsActions.OnDismissEditSheet)
             },
@@ -108,9 +113,15 @@ fun TransactionsScreen(
 
                 else -> LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 8.dp,
+                        bottom = 100.dp
+                    ),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+
                     // Account summary card
                     state.account?.let { account ->
                         item {
@@ -122,14 +133,47 @@ fun TransactionsScreen(
                         }
                     }
 
-                    // Filter bar
                     item {
-                        TransactionFilterBar(
-                            filters = state.activeFilters,
-                            onFilterSelected = {
-                                viewModel.onAction(TransactionsActions.OnFilterSelected(it))
+                        TransactionChartSection(
+                            transactions = state.filteredTransactions,
+                            expanded = state.filteredTransactions.isNotEmpty() && state.isChartExpanded,
+                            onToggle = {
+                                viewModel.onAction(TransactionsActions.OnChartToggle)
                             }
                         )
+                    }
+
+                    // Filters
+                    item {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            TransactionDateFilter(
+                                startDate = state.startDate,
+                                endDate = state.endDate,
+                                isDateFiltered = state.isDateFiltered,
+                                onDateRangeSelected = { start, end ->
+                                    viewModel.onAction(
+                                        TransactionsActions.OnDateRangeSelected(
+                                            start,
+                                            end
+                                        )
+                                    )
+                                },
+                                onClearDateFilter = {
+                                    viewModel.onAction(TransactionsActions.OnClearDateFilter)
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            TransactionTypeFilterBar(
+                                filters = state.activeFilters,
+                                onFilterSelected = {
+                                    viewModel.onAction(TransactionsActions.OnFilterSelected(it))
+                                }
+                            )
+                        }
                     }
 
                     // Empty state
@@ -163,14 +207,22 @@ fun TransactionsScreen(
                     }
 
                     // Transaction list
-                    items(state.filteredTransactions) { transaction ->
+                    items(state.filteredTransactions, key = { it.id }) { transaction ->
                         TransactionItem(
                             transaction = transaction,
                             onClick = {
-                                viewModel.onAction(TransactionsActions.OnEditTransactionClick(transaction))
+                                viewModel.onAction(
+                                    TransactionsActions.OnEditTransactionClick(
+                                        transaction
+                                    )
+                                )
                             },
                             onDeleteClick = {
-                                viewModel.onAction(TransactionsActions.OnDeleteTransactionClick(transaction.id))
+                                viewModel.onAction(
+                                    TransactionsActions.OnDeleteTransactionClick(
+                                        transaction.id
+                                    )
+                                )
                             }
                         )
                     }
@@ -182,6 +234,7 @@ fun TransactionsScreen(
                 onClick = {
                     viewModel.onAction(TransactionsActions.OnAddTransactionClick)
                 },
+                contentDescription = "Create transaction"
             )
         }
     }

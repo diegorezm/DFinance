@@ -51,7 +51,7 @@ fun AccountSummaryCard(
             Text(
                 text = account.name,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.background
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(

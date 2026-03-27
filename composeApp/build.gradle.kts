@@ -60,6 +60,8 @@ kotlin {
             implementation(libs.material.icons)
             implementation(libs.kotlinx.datetime)
 
+            implementation(libs.charts)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

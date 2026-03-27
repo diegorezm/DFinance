@@ -3,6 +3,7 @@ package com.diegorezm.dfinance.transactions.presentation
 import com.diegorezm.dfinance.transactions.data.dto.TransactionDTO
 import com.diegorezm.dfinance.transactions.domain.Transaction
 import com.diegorezm.dfinance.transactions.domain.TransactionType
+import kotlinx.datetime.LocalDate
 
 sealed interface TransactionsActions {
     object OnAddTransactionClick : TransactionsActions
@@ -12,6 +13,9 @@ sealed interface TransactionsActions {
     object OnDismissCreateSheet : TransactionsActions
     data class OnConfirmCreateTransaction(val dto: TransactionDTO) : TransactionsActions
     object OnDismissEditSheet : TransactionsActions
+    object OnChartToggle : TransactionsActions
     data class OnConfirmEditTransaction(val dto: TransactionDTO) : TransactionsActions
     data class OnEditTransactionClick(val transaction: Transaction) : TransactionsActions
+    data class OnDateRangeSelected(val startDate: LocalDate, val endDate: LocalDate) : TransactionsActions
+    object OnClearDateFilter : TransactionsActions
 }
