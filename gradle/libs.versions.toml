@@ -23,6 +23,7 @@ materialIcons = "1.7.3"
 kotlinx-datetime = "0.7.1"
 composeCharts = "0.2.5"
 multiplatform-settings = "1.3.0"
+androidx-core-splashscreen = "1.2.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -63,6 +64,7 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 charts = { module = "io.github.ehsannarmani:compose-charts", version.ref = "composeCharts" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
 multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatform-settings" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidx-core-splashscreen" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

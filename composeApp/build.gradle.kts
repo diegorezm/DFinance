@@ -32,6 +32,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.koin.android)
             implementation(libs.sqldelight.android.driver)
+            implementation(libs.androidx.core.splashscreen)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
