@@ -2,10 +2,12 @@ package com.diegorezm.dfinance.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccountRepository
 import com.diegorezm.dfinance.settings.domain.ChartType
 import com.diegorezm.dfinance.settings.domain.SettingsKeys
 import com.diegorezm.dfinance.transactions.domain.BudgetBucket
+import com.diegorezm.dfinance.transactions.domain.Transaction
 import com.diegorezm.dfinance.transactions.domain.TransactionRepository
 import com.diegorezm.dfinance.transactions.domain.TransactionType
 import com.russhwolf.settings.Settings
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.StringResource
 import kotlin.time.Clock
 
 class HomeViewModel(
@@ -35,80 +38,12 @@ class HomeViewModel(
         transactionRepository.findAll(),
         _isChartExpanded
     ) { accounts, transactions, isChartExpanded ->
-        val accountSummaries = accounts.map { account ->
-            val accountTransactions =
-                transactions.filter { it.accountId == account.id || it.toAccountId == account.id }
-            val balance = accountTransactions.sumOf { tx ->
-                when (tx.type) {
-                    TransactionType.INCOME -> if (tx.accountId == account.id) tx.amount else 0L
-                    TransactionType.EXPENSE -> {
-                        if (tx.accountId == account.id) {
-                            // Savings are considered positive for net worth/balance calculation
-                            if (tx.budgetBucket == BudgetBucket.SAVING) tx.amount else -tx.amount
-                        } else 0L
-                    }
-
-                    TransactionType.TRANSFER -> {
-                        when {
-                            tx.accountId == account.id -> -tx.amount
-                            tx.toAccountId == account.id -> tx.amount
-                            else -> 0L
-                        }
-                    }
-                }
-            }
-            AccountSummary(account, balance)
-        }
-
-        val totalNetWorth = accountSummaries.sumOf { it.balance }
-
-        val chartTypeString = settings.getString(SettingsKeys.KEY_CHART_TYPE, ChartType.BAR.name)
-        val chartType = try {
-            ChartType.valueOf(chartTypeString)
-        } catch (e: Exception) {
-            ChartType.BAR
-        }
-
-        // Budget Goals calculation
-        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val currentMonth = "${now.year}-${now.month.number.toString().padStart(2, '0')}"
-
-        val currentMonthTransactions = transactions.filter { it.date.startsWith(currentMonth) }
-
-        val totalIncome = currentMonthTransactions
-            .filter { it.type == TransactionType.INCOME }
-            .sumOf { it.amount }
-
-        val needPercentage = settings.getInt(SettingsKeys.KEY_NEED_PERCENTAGE, 50)
-        val wantPercentage = settings.getInt(SettingsKeys.KEY_WANT_PERCENTAGE, 30)
-        val savingPercentage = settings.getInt(SettingsKeys.KEY_SAVING_PERCENTAGE, 20)
-
-        val budgetGoals = listOf(
-            BudgetGoal(
-                label = Res.string.bucket_needs,
-                spent = currentMonthTransactions
-                    .filter { it.type == TransactionType.EXPENSE && it.budgetBucket == BudgetBucket.NEED }
-                    .sumOf { it.amount },
-                target = (totalIncome * needPercentage) / 100,
-                color = "#4CAF50"
-            ),
-            BudgetGoal(
-                label = Res.string.bucket_wants,
-                spent = currentMonthTransactions
-                    .filter { it.type == TransactionType.EXPENSE && it.budgetBucket == BudgetBucket.WANT }
-                    .sumOf { it.amount },
-                target = (totalIncome * wantPercentage) / 100,
-                color = "#2196F3"
-            ),
-            BudgetGoal(
-                label = Res.string.bucket_savings,
-                spent = currentMonthTransactions
-                    .filter { it.type == TransactionType.EXPENSE && it.budgetBucket == BudgetBucket.SAVING }
-                    .sumOf { it.amount },
-                target = (totalIncome * savingPercentage) / 100,
-                color = "#FFC107"
-            )
-        )
+        val accountSummaries = buildAccountSummaries(accounts, transactions)
+        val totalNetWorth = calculateNetWorth(accountSummaries)
+        val currentMonthTransactions = filterCurrentMonthTransactions(transactions)
+        val totalIncome = calculateTotalIncome(currentMonthTransactions)
+        val budgetGoals = buildBudgetGoals(currentMonthTransactions, totalIncome)
+        val chartType = resolveChartType()
 
         HomeState(
             totalNetWorth = totalNetWorth,
@@ -127,11 +62,132 @@ class HomeViewModel(
 
     fun onAction(action: HomeActions) {
         when (action) {
-            HomeActions.OnToggleChart -> {
+            HomeActions.OnToggleChart ->
                 _isChartExpanded.value = !_isChartExpanded.value
-            }
 
             else -> {}
         }
     }
+
+    // --- Private helpers ---
+
+    private fun buildAccountSummaries(
+        accounts: List<BankAccount>,
+        transactions: List<Transaction>
+    ): List<AccountSummary> {
+        return accounts.map { account ->
+            val balance = calculateAccountBalance(account, transactions)
+            AccountSummary(account, balance)
+        }
+    }
+
+    private fun calculateAccountBalance(
+        account: BankAccount,
+        transactions: List<Transaction>
+    ): Long {
+        return transactions
+            .filter { it.accountId == account.id || it.toAccountId == account.id }
+            .sumOf { tx -> resolveTransactionAmount(tx, account.id) }
+    }
+
+    private fun resolveTransactionAmount(tx: Transaction, accountId: Long): Long {
+        return when (tx.type) {
+            TransactionType.INCOME ->
+                if (tx.accountId == accountId) tx.amount else 0L
+
+            TransactionType.EXPENSE ->
+                if (tx.accountId == accountId) {
+                    // Savings are considered positive for net worth calculation
+                    if (tx.budgetBucket == BudgetBucket.SAVING) tx.amount else -tx.amount
+                } else 0L
+
+            TransactionType.TRANSFER -> when {
+                tx.accountId == accountId -> -tx.amount
+                tx.toAccountId == accountId -> tx.amount
+                else -> 0L
+            }
+        }
+    }
+
+    private fun calculateNetWorth(summaries: List<AccountSummary>): Long {
+        return summaries.sumOf { it.balance }
+    }
+
+    private fun filterCurrentMonthTransactions(transactions: List<Transaction>): List<Transaction> {
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val currentMonth = "${now.year}-${now.month.number.toString().padStart(2, '0')}"
+        return transactions.filter { it.date.startsWith(currentMonth) }
+    }
+
+    private fun calculateTotalIncome(transactions: List<Transaction>): Long {
+        return transactions
+            .filter { it.type == TransactionType.INCOME }
+            .sumOf { it.amount }
+    }
+
+    private fun buildBudgetGoals(
+        transactions: List<Transaction>,
+        totalIncome: Long
+    ): List<BudgetGoal> {
+        val needPct = settings.getInt(SettingsKeys.KEY_NEED_PERCENTAGE, 50)
+        val wantPct = settings.getInt(SettingsKeys.KEY_WANT_PERCENTAGE, 30)
+        val savingPct = settings.getInt(SettingsKeys.KEY_SAVING_PERCENTAGE, 20)
+
+        return listOf(
+            buildBudgetGoal(
+                label = Res.string.bucket_needs,
+                bucket = BudgetBucket.NEED,
+                transactions = transactions,
+                totalIncome = totalIncome,
+                percentage = needPct,
+                color = "#4CAF50"
+            ),
+            buildBudgetGoal(
+                label = Res.string.bucket_wants,
+                bucket = BudgetBucket.WANT,
+                transactions = transactions,
+                totalIncome = totalIncome,
+                percentage = wantPct,
+                color = "#2196F3"
+            ),
+            buildBudgetGoal(
+                label = Res.string.bucket_savings,
+                bucket = BudgetBucket.SAVING,
+                transactions = transactions,
+                totalIncome = totalIncome,
+                percentage = savingPct,
+                color = "#FFC107"
+            )
+        )
+    }
+
+    private fun buildBudgetGoal(
+        label: StringResource,
+        bucket: BudgetBucket,
+        transactions: List<Transaction>,
+        totalIncome: Long,
+        percentage: Int,
+        color: String
+    ): BudgetGoal {
+        val spent = transactions
+            .filter { it.type == TransactionType.EXPENSE && it.budgetBucket == bucket }
+            .sumOf { it.amount }
+
+        return BudgetGoal(
+            label = label,
+            spent = spent,
+            target = (totalIncome * percentage) / 100,
+            color = color
+        )
+    }
+
+    private fun resolveChartType(): ChartType {
+        val raw = settings.getString(SettingsKeys.KEY_CHART_TYPE, ChartType.BAR.name)
+        return try {
+            ChartType.valueOf(raw)
+        } catch (e: Exception) {
+            ChartType.BAR
+        }
+    }
 }
+
