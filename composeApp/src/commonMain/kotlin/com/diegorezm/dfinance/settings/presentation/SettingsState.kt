@@ -1,5 +1,6 @@
 package com.diegorezm.dfinance.settings.presentation
 
+import com.diegorezm.dfinance.bank_accounts.domain.Currency
 import com.diegorezm.dfinance.settings.domain.ChartType
 
 data class SettingsState(
@@ -8,5 +9,6 @@ data class SettingsState(
     val savingPercentage: Int = 20,
     val totalPercentage: Int = 100,
     val chartType: ChartType = ChartType.BAR,
+    val currency: Currency = Currency.BRL,
     val showSaveSuccess: Boolean = false
 )

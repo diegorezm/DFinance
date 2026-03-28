@@ -15,7 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.bank_accounts.data.dto.BankAccountDTO
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
-import com.diegorezm.dfinance.bank_accounts.domain.Currency
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.edit_account_title
 import dfinance.composeapp.generated.resources.save
@@ -50,7 +49,6 @@ fun BankAccountEditSheet(
 
         BankAccountForm(
             initialName = account.name,
-            initialCurrency = Currency.fromCode(account.currencyCode),
             initialColor = account.color,
             submitLabel = stringResource(Res.string.save),
             onDismiss = onDismiss,

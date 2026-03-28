@@ -5,4 +5,5 @@ object SettingsKeys {
     const val KEY_WANT_PERCENTAGE = "want_percentage"
     const val KEY_SAVING_PERCENTAGE = "saving_percentage"
     const val KEY_CHART_TYPE = "chart_type"
+    const val KEY_CURRENCY = "currency_code"
 }

@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.bank_accounts.presentation.components.toComposeColor
-import com.diegorezm.dfinance.bank_accounts.presentation.components.toDisplayAmount
+import com.diegorezm.dfinance.bank_accounts.presentation.components.toFormattedCurrency
 import com.diegorezm.dfinance.core.presentation.components.NeobrutalistTopAppBar
 import com.diegorezm.dfinance.home.presentation.components.GoalProgressBar
 import com.diegorezm.dfinance.transactions.presentation.components.TransactionChartSection
@@ -175,7 +175,7 @@ private fun NetWorthCard(
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Text(
-                text = totalNetWorth.toDisplayAmount(),
+                text = totalNetWorth.toFormattedCurrency(),
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Black,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -225,7 +225,7 @@ private fun HomeAccountItem(
                 )
             }
             Text(
-                text = summary.balance.toDisplayAmount(),
+                text = summary.balance.toFormattedCurrency(),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface

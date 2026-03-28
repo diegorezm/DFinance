@@ -1,6 +1,12 @@
 package com.diegorezm.dfinance.bank_accounts.presentation.components
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import com.diegorezm.dfinance.bank_accounts.domain.Currency
+import com.diegorezm.dfinance.settings.domain.SettingsKeys
+import com.russhwolf.settings.Settings
+import org.koin.compose.koinInject
 
 /**
  * Converts a hex color string (e.g., "#4CAF50" or "4CAF50") to a Compose Color.
@@ -23,6 +29,7 @@ fun String.toComposeColor(): Color {
 
 /**
  * Formats minor units (cents) to display string e.g. 1999 -> "19.99"
+ * This version doesn't include the currency symbol.
  */
 fun Long.toDisplayAmount(): String {
     val absoluteValue = if (this < 0) -this else this
@@ -30,4 +37,21 @@ fun Long.toDisplayAmount(): String {
     val cents = absoluteValue % 100
     val sign = if (this < 0) "-" else ""
     return "$sign$dollars.${cents.toString().padStart(2, '0')}"
+}
+
+/**
+ * Formats minor units (cents) to display string with the current currency symbol.
+ * e.g. 1999 -> "R$ 19.99"
+ */
+@Composable
+fun Long.toFormattedCurrency(): String {
+    val settings = koinInject<Settings>()
+    val currencyCode = remember(settings) {
+        settings.getString(SettingsKeys.KEY_CURRENCY, Currency.BRL.code)
+    }
+    val currency = remember(currencyCode) {
+        Currency.fromCode(currencyCode)
+    }
+    
+    return currency.format(this)
 }

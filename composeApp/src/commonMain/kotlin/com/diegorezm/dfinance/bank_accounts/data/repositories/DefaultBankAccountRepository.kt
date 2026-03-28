@@ -30,7 +30,6 @@ class DefaultBankAccountRepository(
                     BankAccount(
                         id = entity.id,
                         name = entity.name,
-                        currencyCode = entity.currency_code,
                         color = entity.color
                     )
                 }
@@ -45,7 +44,6 @@ class DefaultBankAccountRepository(
                     BankAccount(
                         id = result.id,
                         name = result.name,
-                        currencyCode = result.currency_code,
                         color = result.color
                     )
                 )
@@ -62,7 +60,6 @@ class DefaultBankAccountRepository(
             db.transaction {
                 queries.insert(
                     name = account.name,
-                    currency_code = account.currencyCode,
                     color = account.color
                 )
             }
@@ -77,7 +74,6 @@ class DefaultBankAccountRepository(
             val id = account.id
             queries.update(
                 name = account.name,
-                currency_code = account.currencyCode,
                 color = account.color,
                 id = id
             )

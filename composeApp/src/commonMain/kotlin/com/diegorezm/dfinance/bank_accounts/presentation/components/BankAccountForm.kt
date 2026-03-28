@@ -1,6 +1,5 @@
 package com.diegorezm.dfinance.bank_accounts.presentation.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,11 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -32,12 +27,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.bank_accounts.data.dto.BankAccountDTO
-import com.diegorezm.dfinance.bank_accounts.domain.Currency
 import com.diegorezm.dfinance.theme.DFinanceTheme
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.cancel
 import dfinance.composeapp.generated.resources.color_label
-import dfinance.composeapp.generated.resources.currency_label
 import dfinance.composeapp.generated.resources.name_label
 import dfinance.composeapp.generated.resources.name_placeholder
 import org.jetbrains.compose.resources.stringResource
@@ -46,16 +39,13 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun BankAccountForm(
     initialName: String = "",
-    initialCurrency: Currency = Currency.BRL,
     initialColor: String = predefinedColors.first(),
     submitLabel: String,
     onDismiss: () -> Unit,
     onSubmit: (BankAccountDTO) -> Unit
 ) {
     var name by remember { mutableStateOf(initialName) }
-    var selectedCurrency by remember { mutableStateOf(initialCurrency) }
     var selectedColor by remember { mutableStateOf(initialColor) }
-    var currencyExpanded by remember { mutableStateOf(false) }
     val canSubmit = name.isNotBlank()
 
     Column(
@@ -98,61 +88,6 @@ fun BankAccountForm(
             )
         }
 
-        // Currency picker
-        Column {
-            Text(
-                text = stringResource(Res.string.currency_label),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            ExposedDropdownMenuBox(
-                expanded = currencyExpanded,
-                onExpandedChange = { currencyExpanded = it }
-            ) {
-                val fillMaxWidth = Modifier
-                    .fillMaxWidth()
-                OutlinedTextField(
-                    value = "${selectedCurrency.code} — ${selectedCurrency.symbol}",
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = currencyExpanded) },
-                    shape = RoundedCornerShape(0.dp),
-                    textStyle = MaterialTheme.typography.bodyMedium,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.outline,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedTextColor = MaterialTheme.colorScheme.onBackground
-                    ),
-                    modifier = fillMaxWidth.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable)
-                )
-                ExposedDropdownMenu(
-                    expanded = currencyExpanded,
-                    onDismissRequest = { currencyExpanded = false },
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background)
-                        .border(2.dp, MaterialTheme.colorScheme.outline)
-                ) {
-                    Currency.entries.forEach { currency ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    "${currency.code} — ${currency.symbol}",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            },
-                            onClick = {
-                                selectedCurrency = currency
-                                currencyExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
-        }
-
         // Color picker
         Column {
             Text(
@@ -193,7 +128,6 @@ fun BankAccountForm(
                     onSubmit(
                         BankAccountDTO(
                             name = name.trim(),
-                            currencyCode = selectedCurrency.code,
                             balance = 0,
                             color = selectedColor
                         )

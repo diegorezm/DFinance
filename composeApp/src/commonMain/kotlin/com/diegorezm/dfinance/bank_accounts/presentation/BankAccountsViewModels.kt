@@ -54,7 +54,6 @@ class BankAccountsViewModel(
                 if (currentAccount?.id != null) {
                     val updatedAccount = currentAccount.copy(
                         name = action.dto.name,
-                        currencyCode = action.dto.currencyCode,
                         color = action.dto.color
                     )
                     updateAccount(updatedAccount)

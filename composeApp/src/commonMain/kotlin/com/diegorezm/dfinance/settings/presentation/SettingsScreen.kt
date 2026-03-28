@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.core.presentation.components.NeobrutalistTopAppBar
 import com.diegorezm.dfinance.settings.presentation.components.BudgetTargetsSection
 import com.diegorezm.dfinance.settings.presentation.components.ChartSettingsSection
+import com.diegorezm.dfinance.settings.presentation.components.CurrencySettingsSection
 import com.diegorezm.dfinance.settings.presentation.components.SaveButton
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.nav_settings
@@ -64,6 +65,13 @@ fun SettingsScreen(
                 item {
                     BudgetTargetsSection(
                         state = state,
+                        onAction = viewModel::onAction
+                    )
+                }
+
+                item {
+                    CurrencySettingsSection(
+                        selectedCurrency = state.currency,
                         onAction = viewModel::onAction
                     )
                 }

@@ -2,6 +2,7 @@ package com.diegorezm.dfinance.settings.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.diegorezm.dfinance.bank_accounts.domain.Currency
 import com.diegorezm.dfinance.settings.domain.ChartType
 import com.diegorezm.dfinance.settings.domain.SettingsKeys
 import com.russhwolf.settings.Settings
@@ -33,6 +34,8 @@ class SettingsViewModel(
         } catch (e: Exception) {
             ChartType.BAR
         }
+        val currencyCode = settings.getString(SettingsKeys.KEY_CURRENCY, Currency.BRL.code)
+        val currency = Currency.fromCode(currencyCode)
 
         _state.update {
             it.copy(
@@ -40,7 +43,8 @@ class SettingsViewModel(
                 wantPercentage = want,
                 savingPercentage = saving,
                 totalPercentage = need + want + saving,
-                chartType = chartType
+                chartType = chartType,
+                currency = currency
             )
         }
     }
@@ -76,6 +80,11 @@ class SettingsViewModel(
                     it.copy(chartType = action.chartType)
                 }
             }
+            is SettingsActions.OnCurrencyChange -> {
+                _state.update {
+                    it.copy(currency = action.currency)
+                }
+            }
             SettingsActions.OnSaveClick -> saveSettings()
             SettingsActions.OnDismissSuccessMessage -> {
                 _state.update { it.copy(showSaveSuccess = false) }
@@ -89,6 +98,7 @@ class SettingsViewModel(
         settings[SettingsKeys.KEY_WANT_PERCENTAGE] = currentState.wantPercentage
         settings[SettingsKeys.KEY_SAVING_PERCENTAGE] = currentState.savingPercentage
         settings[SettingsKeys.KEY_CHART_TYPE] = currentState.chartType.name
+        settings[SettingsKeys.KEY_CURRENCY] = currentState.currency.code
         
         _state.update { it.copy(showSaveSuccess = true) }
         

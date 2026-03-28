@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.diegorezm.dfinance.bank_accounts.presentation.components.toFormattedCurrency
 import com.diegorezm.dfinance.theme.DFinanceTheme
 import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.Transaction
@@ -234,7 +235,7 @@ fun TransactionItem(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "$prefix${transaction.amount.toDisplayAmount()}",
+                        text = "$prefix${transaction.amount.toFormattedCurrency()}",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = amountColor
@@ -321,9 +322,3 @@ private data class Quintuple<A, B, C, D, E>(
     val fourth: D,
     val fifth: E
 )
-
-fun Long.toDisplayAmount(): String {
-    val whole = this / 100
-    val fraction = this % 100
-    return "$whole.${fraction.toString().padStart(2, '0')}"
-}

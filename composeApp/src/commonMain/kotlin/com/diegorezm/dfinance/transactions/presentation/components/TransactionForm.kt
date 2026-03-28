@@ -54,8 +54,11 @@ fun TransactionForm(
 
     val otherAccounts = accounts.filter { it.id != accountId }
 
+    // Normalize amount text for validation and parsing (handle comma as decimal separator)
+    val normalizedAmountText = amountText.replace(",", ".")
+
     val canSubmit = amountText.isNotBlank() &&
-            amountText.toDoubleOrNull() != null &&
+            normalizedAmountText.toDoubleOrNull() != null &&
             (selectedType != TransactionType.TRANSFER || toAccountId != null) &&
             (selectedType != TransactionType.EXPENSE || selectedBudgetBucket != null)
 
@@ -339,7 +342,7 @@ fun TransactionForm(
 
             Button(
                 onClick = {
-                    val amount = (amountText.toDoubleOrNull()?.times(100))?.toLong() ?: 0L
+                    val amount = (normalizedAmountText.toDoubleOrNull()?.times(100))?.toLong() ?: 0L
                     onSubmit(
                         TransactionDTO(
                             accountId = accountId,

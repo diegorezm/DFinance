@@ -19,8 +19,7 @@ enum class Currency(
     MXN("MXN", "MX$", 2);
 
     fun format(amountMinorUnits: Long): String {
-        val initialDivisor = 10.0
-        val divisor = initialDivisor.pow(minorUnits.toDouble())
+        val divisor = 10.0.pow(minorUnits).toLong()
         val whole = amountMinorUnits / divisor
         val fraction = amountMinorUnits % divisor
         return if (minorUnits == 0) {

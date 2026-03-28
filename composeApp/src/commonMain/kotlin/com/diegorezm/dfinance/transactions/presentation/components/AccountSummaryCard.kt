@@ -21,7 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
-import com.diegorezm.dfinance.bank_accounts.presentation.components.toDisplayAmount
+import com.diegorezm.dfinance.bank_accounts.presentation.components.toComposeColor
+import com.diegorezm.dfinance.bank_accounts.presentation.components.toFormattedCurrency
 import com.diegorezm.dfinance.theme.DFinanceTheme
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.expenses_label
@@ -71,7 +72,7 @@ fun AccountSummaryCard(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    val incomeStr = totalIncome.toDisplayAmount()
+                    val incomeStr = totalIncome.toFormattedCurrency()
                     Text(
                         text = if (totalIncome >= 0) "+$incomeStr" else incomeStr,
                         style = MaterialTheme.typography.bodyMedium,
@@ -90,7 +91,7 @@ fun AccountSummaryCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "-${totalExpenses.toDisplayAmount()}",
+                        text = "-${totalExpenses.toFormattedCurrency()}",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFFF44336)
@@ -107,7 +108,7 @@ fun AccountSummaryCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "-${totalSavings.toDisplayAmount()}",
+                        text = "-${totalSavings.toFormattedCurrency()}",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF2196F3)
@@ -128,12 +129,6 @@ private fun VerticalDivider() {
     )
 }
 
-fun String.toComposeColor(): Color = try {
-    Color(this.removePrefix("#").toLong(16) or 0xFF000000)
-} catch (e: Exception) {
-    Color(0xFF4CAF50)
-}
-
 @Preview
 @Composable
 private fun AccountSummaryCardPreview() {
@@ -143,7 +138,6 @@ private fun AccountSummaryCardPreview() {
                 account = BankAccount(
                     id = 1L,
                     name = "Main Savings",
-                    currencyCode = "USD",
                     color = "#E8844A"
                 ),
                 totalIncome = 250000,
