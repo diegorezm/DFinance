@@ -27,9 +27,12 @@ data class TransactionsState(
         else transactions.filter { activeFilters.contains(it.type) }
 
     val totalIncome: Long
-        get() = transactions
-            .filter { it.type == TransactionType.INCOME }
-            .sumOf { it.amount }
+        get() {
+            val income = transactions
+                .filter { it.type == TransactionType.INCOME }
+                .sumOf { it.amount }
+            return income - totalExpenses - totalSavings
+        }
 
     val totalExpenses: Long
         get() = transactions

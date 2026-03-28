@@ -3,34 +3,13 @@ package com.diegorezm.dfinance.transactions.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -42,17 +21,8 @@ import com.diegorezm.dfinance.bank_accounts.presentation.components.toDisplayAmo
 import com.diegorezm.dfinance.transactions.data.dto.TransactionDTO
 import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.TransactionType
-import dfinance.composeapp.generated.resources.Res
-import dfinance.composeapp.generated.resources.amount_label
-import dfinance.composeapp.generated.resources.amount_placeholder
-import dfinance.composeapp.generated.resources.cancel
-import dfinance.composeapp.generated.resources.note_label
-import dfinance.composeapp.generated.resources.note_placeholder
-import dfinance.composeapp.generated.resources.transfer_to_label
-import dfinance.composeapp.generated.resources.type_expense
-import dfinance.composeapp.generated.resources.type_income
-import dfinance.composeapp.generated.resources.type_label
-import dfinance.composeapp.generated.resources.type_transfer
+import com.diegorezm.dfinance.transactions.domain.toResource
+import dfinance.composeapp.generated.resources.*
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
@@ -89,11 +59,14 @@ fun TransactionForm(
             (selectedType != TransactionType.TRANSFER || toAccountId != null) &&
             (selectedType != TransactionType.EXPENSE || selectedBudgetBucket != null)
 
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 32.dp),
+            .imePadding()
+            .verticalScroll(scrollState)
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Amount
@@ -142,8 +115,7 @@ fun TransactionForm(
             ExposedDropdownMenuBox(
                 expanded = typeExpanded,
                 onExpandedChange = { typeExpanded = it },
-
-                ) {
+            ) {
                 OutlinedTextField(
                     value = when (selectedType) {
                         TransactionType.INCOME -> stringResource(Res.string.type_income)
@@ -203,7 +175,7 @@ fun TransactionForm(
         if (selectedType == TransactionType.EXPENSE) {
             Column {
                 Text(
-                    text = "Budget Bucket",
+                    text = stringResource(Res.string.budget_bucket_label),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.Bold
@@ -239,7 +211,7 @@ fun TransactionForm(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = bucket.name,
+                                    text = stringResource(bucket.toResource()),
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = if (isSelected) MaterialTheme.colorScheme.onPrimary
@@ -268,7 +240,7 @@ fun TransactionForm(
                     onExpandedChange = { toAccountExpanded = it },
                 ) {
                     OutlinedTextField(
-                        value = accounts.find { it.id == toAccountId }?.name ?: "Select account",
+                        value = accounts.find { it.id == toAccountId }?.name ?: stringResource(Res.string.select_account_placeholder),
                         onValueChange = {},
                         readOnly = true,
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = toAccountExpanded) },

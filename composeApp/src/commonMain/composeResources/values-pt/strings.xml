@@ -57,25 +57,31 @@
     <string name="select_date_range">Selecionar período</string>
     <string name="selected_range">Período Selecionado</string>
 
+    <string name="income_label">Receita</string>
+    <string name="expenses_label">Despesas</string>
+    <string name="savings_label">Poupança</string>
+
     <!-- Delete Transaction -->
     <string name="delete_transaction_title">Excluir transação?</string>
     <string name="delete_transaction_message">Esta transação será removida. Esta ação não pode ser desfeita.</string>
 
     <!-- Home Screen -->
     <string name="total_net_worth">Patrimônio Total</string>
-    <string name="chart_title">Receitas vs despesas</string>
+    <string name="chart_title">Fluxo Mensal</string>
     <string name="no_chart_data">Nenhum dado para exibir ainda.</string>
     <string name="chart_expand">Expandir</string>
     <string name="chart_collapse">Recolher</string>
+    <string name="budget_goals_title">METAS DESTE MÊS</string>
+    <string name="empty_budget_goals_message">Adicione sua primeira receita este mês para ver suas metas de orçamento.</string>
 
     <!-- Settings Screen -->
     <string name="settings_title">Configurações</string>
     <string name="budget_targets_title">Metas de Orçamento</string>
     <string name="budget_targets_description">Defina suas metas de gastos mensais para cada categoria.</string>
-    <string name="needs_label">Necessidades (%)</string>
-    <string name="wants_label">Desejos (%)</string>
-    <string name="savings_label">Reserva (%)</string>
-    <string name="total_label">Total: %1$d%%</string>
+    <string name="needs_label_pct">Necessidades (%1.d%)</string>
+    <string name="wants_label_pct">Desejos (%1.d%)</string>
+    <string name="savings_label_pct">Poupança (%1.d%)</string>
+    <string name="total_label">Total: %1$d%</string>
     <string name="total_error">O total deve ser 100%</string>
 
     <string name="chart_settings_title">Exibição do Gráfico</string>

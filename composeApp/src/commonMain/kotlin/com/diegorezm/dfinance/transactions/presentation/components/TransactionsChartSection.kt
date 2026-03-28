@@ -94,24 +94,16 @@ fun TransactionChartSection(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Legend
-                LegendItem(incomeColor, incomeLabel)
-                LegendItem(expenseColor, expenseLabel)
-                LegendItem(savingColor, savingLabel)
 
-                Icon(
-                    imageVector = if (expanded) Icons.Default.ArrowDropDown else Icons.Default.KeyboardArrowUp,
-                    contentDescription = if (expanded) stringResource(Res.string.chart_collapse) else stringResource(
-                        Res.string.chart_expand
-                    ),
-                    modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            Icon(
+                imageVector = if (expanded) Icons.Default.ArrowDropDown else Icons.Default.KeyboardArrowUp,
+                contentDescription = if (expanded) stringResource(Res.string.chart_collapse) else stringResource(
+                    Res.string.chart_expand
+                ),
+                modifier = Modifier.size(20.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            
         }
 
         // Chart
@@ -165,6 +157,7 @@ fun TransactionChartSection(
                                 )
                             )
                         }
+
                         ChartType.LINE -> {
                             val lineData = remember(chartData) {
                                 listOf(
@@ -214,16 +207,29 @@ fun TransactionChartSection(
                                 )
                             )
                         }
+
                         ChartType.PIE -> {
                             val totalIncome = chartData.sumOf { it.values[0].value }
                             val totalExpenses = chartData.sumOf { it.values[1].value }
                             val totalSavings = chartData.sumOf { it.values[2].value }
-                            
+
                             val pieData = remember(totalIncome, totalExpenses, totalSavings) {
                                 listOf(
-                                    Pie(label = incomeLabel, data = totalIncome, color = incomeColor),
-                                    Pie(label = expenseLabel, data = totalExpenses, color = expenseColor),
-                                    Pie(label = savingLabel, data = totalSavings, color = savingColor)
+                                    Pie(
+                                        label = incomeLabel,
+                                        data = totalIncome,
+                                        color = incomeColor
+                                    ),
+                                    Pie(
+                                        label = expenseLabel,
+                                        data = totalExpenses,
+                                        color = expenseColor
+                                    ),
+                                    Pie(
+                                        label = savingLabel,
+                                        data = totalSavings,
+                                        color = savingColor
+                                    )
                                 )
                             }
                             PieChart(
@@ -265,7 +271,7 @@ private fun buildChartData(
 ): List<Bars> {
     // Group transactions by "YYYY-MM"
     val grouped = transactions
-        .filter { it.type == TransactionType.INCOME || it.type == TransactionType.EXPENSE }
+        .filter { it.type == TransactionType.INCOME || it.type == TransactionType.EXPENSE || it.type == TransactionType.TRANSFER }
         .sortedBy { it.date }
         .groupBy { it.date.take(7) }
         .takeLast(6)
@@ -273,13 +279,13 @@ private fun buildChartData(
 
 
     return grouped.map { (month, txs) ->
-        val income = txs
+        val rawIncome = txs
             .filter { it.type == TransactionType.INCOME }
             .sumOf { it.amount }
             .toDouble() / 100.0
 
         val expenses = txs
-            .filter { it.type == TransactionType.EXPENSE && it.budgetBucket != BudgetBucket.SAVING }
+            .filter { (it.type == TransactionType.EXPENSE && it.budgetBucket != BudgetBucket.SAVING) || it.type == TransactionType.TRANSFER }
             .sumOf { it.amount }
             .toDouble() / 100.0
 
@@ -287,6 +293,8 @@ private fun buildChartData(
             .filter { it.type == TransactionType.EXPENSE && it.budgetBucket == BudgetBucket.SAVING }
             .sumOf { it.amount }
             .toDouble() / 100.0
+            
+        val netIncome = rawIncome - expenses - savings
 
         Bars(
             label = month.takeLast(2).trimStart('0').ifEmpty { "0" } + "/" + month.take(4)
@@ -294,7 +302,7 @@ private fun buildChartData(
             values = listOf(
                 Bars.Data(
                     label = incomeLabel,
-                    value = income,
+                    value = netIncome,
                     color = SolidColor(incomeColor)
                 ),
                 Bars.Data(

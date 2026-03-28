@@ -18,11 +18,11 @@ import com.diegorezm.dfinance.settings.presentation.SettingsState
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.budget_targets_description
 import dfinance.composeapp.generated.resources.budget_targets_title
-import dfinance.composeapp.generated.resources.needs_label
-import dfinance.composeapp.generated.resources.savings_label
+import dfinance.composeapp.generated.resources.needs_label_pct
+import dfinance.composeapp.generated.resources.savings_label_pct
 import dfinance.composeapp.generated.resources.total_error
 import dfinance.composeapp.generated.resources.total_label
-import dfinance.composeapp.generated.resources.wants_label
+import dfinance.composeapp.generated.resources.wants_label_pct
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -38,27 +38,28 @@ fun BudgetTargetsSection(
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             BudgetInput(
-                label = stringResource(Res.string.needs_label),
+                label = stringResource(Res.string.needs_label_pct, state.needPercentage),
                 value = state.needPercentage,
                 onValueChange = {
                     onAction(SettingsActions.OnNeedPercentageChange(it))
                 }
             )
+
             BudgetInput(
-                label = stringResource(Res.string.wants_label),
+                label = stringResource(Res.string.wants_label_pct, state.wantPercentage),
                 value = state.wantPercentage,
                 onValueChange = {
                     onAction(SettingsActions.OnWantPercentageChange(it))
                 }
             )
+
             BudgetInput(
-                label = stringResource(Res.string.savings_label),
+                label = stringResource(Res.string.savings_label_pct, state.savingPercentage),
                 value = state.savingPercentage,
                 onValueChange = {
                     onAction(SettingsActions.OnSavingPercentageChange(it))
                 }
             )
-
             Spacer(modifier = Modifier.height(8.dp))
 
             Row(

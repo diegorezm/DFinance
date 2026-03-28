@@ -23,6 +23,11 @@ import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
 import com.diegorezm.dfinance.bank_accounts.presentation.components.toDisplayAmount
 import com.diegorezm.dfinance.theme.DFinanceTheme
+import dfinance.composeapp.generated.resources.Res
+import dfinance.composeapp.generated.resources.expenses_label
+import dfinance.composeapp.generated.resources.income_label
+import dfinance.composeapp.generated.resources.savings_label
+import org.jetbrains.compose.resources.stringResource
 
 
 @Composable
@@ -52,7 +57,7 @@ fun AccountSummaryCard(
             Text(
                 text = account.name,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.background,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(
@@ -62,24 +67,25 @@ fun AccountSummaryCard(
                 // Income
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Income",
+                        text = stringResource(Res.string.income_label),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    val incomeStr = totalIncome.toDisplayAmount()
                     Text(
-                        text = "+${totalIncome.toDisplayAmount()}",
+                        text = if (totalIncome >= 0) "+$incomeStr" else incomeStr,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF4CAF50)
                     )
                 }
-                
+
                 VerticalDivider()
 
                 // Expenses
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Expenses",
+                        text = stringResource(Res.string.expenses_label),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -96,12 +102,12 @@ fun AccountSummaryCard(
                 // Savings
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Savings",
+                        text = stringResource(Res.string.savings_label),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = totalSavings.toDisplayAmount(),
+                        text = "-${totalSavings.toDisplayAmount()}",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF2196F3)

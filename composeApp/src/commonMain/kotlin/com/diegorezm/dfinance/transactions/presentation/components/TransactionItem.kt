@@ -43,6 +43,7 @@ import com.diegorezm.dfinance.theme.DFinanceTheme
 import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.Transaction
 import com.diegorezm.dfinance.transactions.domain.TransactionType
+import com.diegorezm.dfinance.transactions.domain.toResource
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.cancel
 import dfinance.composeapp.generated.resources.delete
@@ -161,7 +162,7 @@ fun TransactionItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { 
+                    .clickable {
                         if (hasNote) {
                             isNoteExpanded = !isNoteExpanded
                         } else {
@@ -205,7 +206,7 @@ fun TransactionItem(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = if (transaction.type == TransactionType.EXPENSE && transaction.budgetBucket != null) {
-                                    transaction.budgetBucket.name.lowercase().replaceFirstChar { it.uppercase() }
+                                    stringResource(transaction.budgetBucket.toResource())
                                 } else {
                                     stringResource(labelRes)
                                 },

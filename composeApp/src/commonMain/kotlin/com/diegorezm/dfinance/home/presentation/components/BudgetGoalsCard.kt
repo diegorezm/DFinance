@@ -2,7 +2,10 @@ package com.diegorezm.dfinance.home.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +16,13 @@ import androidx.compose.ui.unit.dp
 import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.Transaction
 import com.diegorezm.dfinance.transactions.domain.TransactionType
+import dfinance.composeapp.generated.resources.Res
+import dfinance.composeapp.generated.resources.budget_goals_title
+import dfinance.composeapp.generated.resources.empty_budget_goals_message
+import dfinance.composeapp.generated.resources.needs_label_pct
+import dfinance.composeapp.generated.resources.savings_label_pct
+import dfinance.composeapp.generated.resources.wants_label_pct
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BudgetGoalsCard(
@@ -50,36 +60,35 @@ fun BudgetGoalsCard(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "THIS MONTH'S GOALS",
+            text = stringResource(Res.string.budget_goals_title),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        // Only show the bars if there is income. Otherwise, targets are 0.
         if (totalIncome > 0) {
             GoalProgressBar(
-                label = "NEEDS ($needsPct%)",
+                label = stringResource(Res.string.needs_label_pct, needsPct).uppercase(),
                 spent = needsSpent,
                 target = needsTarget,
                 color = MaterialTheme.colorScheme.primary
             )
             GoalProgressBar(
-                label = "WANTS ($wantsPct%)",
+                label = stringResource(Res.string.wants_label_pct, wantsPct).uppercase(),
                 spent = wantsSpent,
                 target = wantsTarget,
-                color = MaterialTheme.colorScheme.secondary // Or a different accent color
+                color = MaterialTheme.colorScheme.secondary
             )
             GoalProgressBar(
-                label = "SAVINGS ($savingsPct%)",
+                label = stringResource(Res.string.savings_label_pct, savingsPct).uppercase(),
                 spent = savingsSpent,
                 target = savingsTarget,
-                color = MaterialTheme.colorScheme.tertiary // Or a different accent color
+                color = MaterialTheme.colorScheme.tertiary
             )
         } else {
             // Empty State
             Text(
-                text = "Add your first income this month to see your budget targets.",
+                text = stringResource(Res.string.empty_budget_goals_message),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
