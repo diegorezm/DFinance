@@ -217,17 +217,17 @@ fun TransactionChartSection(
                                 listOf(
                                     Pie(
                                         label = incomeLabel,
-                                        data = totalIncome,
+                                        data = totalIncome.coerceAtLeast(0.0),
                                         color = incomeColor
                                     ),
                                     Pie(
                                         label = expenseLabel,
-                                        data = totalExpenses,
+                                        data = totalExpenses.coerceAtLeast(0.0),
                                         color = expenseColor
                                     ),
                                     Pie(
                                         label = savingLabel,
-                                        data = totalSavings,
+                                        data = totalSavings.coerceAtLeast(0.0),
                                         color = savingColor
                                     )
                                 )
