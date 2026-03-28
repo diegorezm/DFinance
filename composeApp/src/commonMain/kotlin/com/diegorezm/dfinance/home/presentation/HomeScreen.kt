@@ -37,6 +37,7 @@ import com.diegorezm.dfinance.home.presentation.components.GoalProgressBar
 import com.diegorezm.dfinance.transactions.presentation.components.TransactionChartSection
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.accounts_title
+import dfinance.composeapp.generated.resources.monthly_budget_title
 import dfinance.composeapp.generated.resources.nav_home
 import dfinance.composeapp.generated.resources.total_net_worth
 import org.jetbrains.compose.resources.stringResource
@@ -129,13 +130,13 @@ private fun BudgetGoalsSection(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Monthly Budget Goals",
+                text = stringResource(Res.string.monthly_budget_title),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold
             )
             goals.forEach { goal ->
                 GoalProgressBar(
-                    label = goal.label,
+                    label = stringResource(goal.label),
                     spent = goal.spent,
                     target = goal.target,
                     color = Color(parseColor(goal.color))

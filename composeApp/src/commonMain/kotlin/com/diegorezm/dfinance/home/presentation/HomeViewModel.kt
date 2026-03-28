@@ -9,6 +9,10 @@ import com.diegorezm.dfinance.transactions.domain.BudgetBucket
 import com.diegorezm.dfinance.transactions.domain.TransactionRepository
 import com.diegorezm.dfinance.transactions.domain.TransactionType
 import com.russhwolf.settings.Settings
+import dfinance.composeapp.generated.resources.Res
+import dfinance.composeapp.generated.resources.bucket_needs
+import dfinance.composeapp.generated.resources.bucket_savings
+import dfinance.composeapp.generated.resources.bucket_wants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -19,8 +23,8 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
 class HomeViewModel(
-    private val bankAccountRepository: BankAccountRepository,
-    private val transactionRepository: TransactionRepository,
+    bankAccountRepository: BankAccountRepository,
+    transactionRepository: TransactionRepository,
     private val settings: Settings
 ) : ViewModel() {
 
@@ -81,7 +85,7 @@ class HomeViewModel(
 
         val budgetGoals = listOf(
             BudgetGoal(
-                label = "Needs",
+                label = Res.string.bucket_needs,
                 spent = currentMonthTransactions
                     .filter { it.type == TransactionType.EXPENSE && it.budgetBucket == BudgetBucket.NEED }
                     .sumOf { it.amount },
@@ -89,7 +93,7 @@ class HomeViewModel(
                 color = "#4CAF50"
             ),
             BudgetGoal(
-                label = "Wants",
+                label = Res.string.bucket_wants,
                 spent = currentMonthTransactions
                     .filter { it.type == TransactionType.EXPENSE && it.budgetBucket == BudgetBucket.WANT }
                     .sumOf { it.amount },
@@ -97,7 +101,7 @@ class HomeViewModel(
                 color = "#2196F3"
             ),
             BudgetGoal(
-                label = "Savings",
+                label = Res.string.bucket_savings,
                 spent = currentMonthTransactions
                     .filter { it.type == TransactionType.EXPENSE && it.budgetBucket == BudgetBucket.SAVING }
                     .sumOf { it.amount },

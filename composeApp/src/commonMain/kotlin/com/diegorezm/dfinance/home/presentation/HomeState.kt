@@ -3,6 +3,7 @@ package com.diegorezm.dfinance.home.presentation
 import com.diegorezm.dfinance.bank_accounts.domain.BankAccount
 import com.diegorezm.dfinance.settings.domain.ChartType
 import com.diegorezm.dfinance.transactions.domain.Transaction
+import org.jetbrains.compose.resources.StringResource
 
 data class HomeState(
     val totalNetWorth: Long = 0L,
@@ -20,7 +21,7 @@ data class AccountSummary(
 )
 
 data class BudgetGoal(
-    val label: String,
+    val label: StringResource,
     val spent: Long,
     val target: Long,
     val color: String // Hex color
