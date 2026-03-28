@@ -52,6 +52,6 @@ fun Long.toFormattedCurrency(): String {
     val currency = remember(currencyCode) {
         Currency.fromCode(currencyCode)
     }
-    
+
     return currency.format(this)
 }
