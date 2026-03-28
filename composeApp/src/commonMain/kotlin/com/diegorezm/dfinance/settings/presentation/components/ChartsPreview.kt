@@ -13,10 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 
@@ -37,38 +34,6 @@ fun NeobrutalistBarChartPreview() {
                     .border(2.dp, MaterialTheme.colorScheme.outline, RectangleShape)
             )
         }
-    }
-}
-
-@Composable
-fun NeobrutalistLineChartPreview() {
-    val lineColor = MaterialTheme.colorScheme.primary
-    val outlineColor = MaterialTheme.colorScheme.outline
-
-    Canvas(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        val path = Path().apply {
-            moveTo(0f, size.height)
-            lineTo(size.width * 0.3f, size.height * 0.5f)
-            lineTo(size.width * 0.6f, size.height * 0.7f)
-            lineTo(size.width, size.height * 0.1f)
-        }
-
-        // Draw the thick Neobrutalist stroke
-        drawPath(
-            path = path,
-            color = lineColor,
-            style = Stroke(
-                width = 8.dp.toPx(),
-                cap = StrokeCap.Square,
-                join = StrokeJoin.Miter
-            )
-        )
-        // Draw an even thicker black border behind it to give it that raw outline effect (optional)
-        drawPath(
-            path = path,
-            color = outlineColor,
-            style = Stroke(width = 12.dp.toPx(), cap = StrokeCap.Square, join = StrokeJoin.Miter)
-        )
     }
 }
 

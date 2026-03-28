@@ -42,7 +42,6 @@ import dfinance.composeapp.generated.resources.type_expense
 import dfinance.composeapp.generated.resources.type_income
 import dfinance.composeapp.generated.resources.type_savings
 import ir.ehsannarmani.compose_charts.ColumnChart
-import ir.ehsannarmani.compose_charts.LineChart
 import ir.ehsannarmani.compose_charts.PieChart
 import ir.ehsannarmani.compose_charts.models.BarProperties
 import ir.ehsannarmani.compose_charts.models.Bars
@@ -50,7 +49,6 @@ import ir.ehsannarmani.compose_charts.models.GridProperties
 import ir.ehsannarmani.compose_charts.models.HorizontalIndicatorProperties
 import ir.ehsannarmani.compose_charts.models.IndicatorCount
 import ir.ehsannarmani.compose_charts.models.LabelProperties
-import ir.ehsannarmani.compose_charts.models.Line
 import ir.ehsannarmani.compose_charts.models.Pie
 import org.jetbrains.compose.resources.stringResource
 
@@ -151,56 +149,6 @@ fun TransactionChartSection(
                                 ),
                                 labelProperties = LabelProperties(
                                     enabled = true,
-                                    textStyle = MaterialTheme.typography.labelSmall.copy(
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                )
-                            )
-                        }
-
-                        ChartType.LINE -> {
-                            val lineData = remember(chartData) {
-                                listOf(
-                                    Line(
-                                        label = incomeLabel,
-                                        values = chartData.map { it.values[0].value },
-                                        color = SolidColor(incomeColor),
-                                        firstGradientFillColor = incomeColor.copy(alpha = 0.2f),
-                                        secondGradientFillColor = Color.Transparent
-                                    ),
-                                    Line(
-                                        label = expenseLabel,
-                                        values = chartData.map { it.values[1].value },
-                                        color = SolidColor(expenseColor),
-                                        firstGradientFillColor = expenseColor.copy(alpha = 0.2f),
-                                        secondGradientFillColor = Color.Transparent
-                                    ),
-                                    Line(
-                                        label = savingLabel,
-                                        values = chartData.map { it.values[2].value },
-                                        color = SolidColor(savingColor),
-                                        firstGradientFillColor = savingColor.copy(alpha = 0.2f),
-                                        secondGradientFillColor = Color.Transparent
-                                    )
-                                )
-                            }
-                            LineChart(
-                                modifier = Modifier.fillMaxSize(),
-                                data = lineData,
-                                gridProperties = GridProperties(
-                                    enabled = true,
-                                    xAxisProperties = GridProperties.AxisProperties(enabled = false)
-                                ),
-                                indicatorProperties = HorizontalIndicatorProperties(
-                                    enabled = true,
-                                    textStyle = MaterialTheme.typography.labelSmall.copy(
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    ),
-                                    count = IndicatorCount.CountBased(4)
-                                ),
-                                labelProperties = LabelProperties(
-                                    enabled = true,
-                                    labels = chartData.map { it.label },
                                     textStyle = MaterialTheme.typography.labelSmall.copy(
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )

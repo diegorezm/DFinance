@@ -29,7 +29,6 @@ import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.chart_settings_description
 import dfinance.composeapp.generated.resources.chart_settings_title
 import dfinance.composeapp.generated.resources.chart_type_bar
-import dfinance.composeapp.generated.resources.chart_type_line
 import dfinance.composeapp.generated.resources.chart_type_pie
 import org.jetbrains.compose.resources.stringResource
 
@@ -41,7 +40,7 @@ fun ChartSettingsSection(
 ) {
     val chartTypes = ChartType.entries
     val pagerState = rememberPagerState(
-        initialPage = chartTypes.indexOf(selectedChartType),
+        initialPage = chartTypes.indexOf(selectedChartType).coerceAtLeast(0),
         pageCount = { chartTypes.size }
     )
 
@@ -81,7 +80,6 @@ fun ChartSettingsSection(
             Text(
                 text = when (selectedChartType) {
                     ChartType.BAR -> stringResource(Res.string.chart_type_bar)
-                    ChartType.LINE -> stringResource(Res.string.chart_type_line)
                     ChartType.PIE -> stringResource(Res.string.chart_type_pie)
                 },
                 style = MaterialTheme.typography.titleMedium,
@@ -118,7 +116,6 @@ private fun ChartPlaceholder(
         Box(modifier = Modifier.padding(16.dp)) {
             when (chartType) {
                 ChartType.BAR -> NeobrutalistBarChartPreview()
-                ChartType.LINE -> NeobrutalistLineChartPreview()
                 ChartType.PIE -> NeobrutalistPieChartPreview()
             }
         }
