@@ -74,14 +74,14 @@
     <string name="chart_collapse">Recolher</string>
     <string name="budget_goals_title">METAS DESTE MÊS</string>
     <string name="empty_budget_goals_message">Adicione sua primeira receita este mês para ver suas metas de orçamento.</string>
-
+    <string name="monthly_budget_title">Metas de Orçamento</string>
     <!-- Settings Screen -->
     <string name="settings_title">Configurações</string>
     <string name="budget_targets_title">Metas de Orçamento</string>
     <string name="budget_targets_description">Defina suas metas de gastos mensais para cada categoria.</string>
     <string name="needs_label_pct">Necessidades (%1$d%)</string>
     <string name="wants_label_pct">Desejos (%1$d%)</string>
-    <string name="savings_label_pct">Poupança (%1$d%w)</string>
+    <string name="savings_label_pct">Poupança (%1$d%)</string>
     <string name="bucket_needs">Necessidades</string>
     <string name="bucket_wants">Desejos</string>
     <string name="bucket_savings">Poupança</string>

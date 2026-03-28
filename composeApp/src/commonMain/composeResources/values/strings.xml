@@ -75,6 +75,7 @@
     <string name="chart_collapse">Collapse</string>
     <string name="budget_goals_title">THIS MONTH\'S GOALS</string>
     <string name="empty_budget_goals_message">Add your first income this month to see your budget targets.</string>
+    <string name="monthly_budget_title">Monthly Budget Goals</string>
 
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
