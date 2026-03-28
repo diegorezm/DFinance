@@ -19,7 +19,6 @@ import com.diegorezm.dfinance.core.presentation.components.NeobrutalistTopAppBar
 import com.diegorezm.dfinance.settings.presentation.components.BudgetTargetsSection
 import com.diegorezm.dfinance.settings.presentation.components.ChartSettingsSection
 import com.diegorezm.dfinance.settings.presentation.components.CurrencySettingsSection
-import com.diegorezm.dfinance.settings.presentation.components.SaveButton
 import dfinance.composeapp.generated.resources.Res
 import dfinance.composeapp.generated.resources.nav_settings
 import dfinance.composeapp.generated.resources.settings_saved_success
@@ -63,8 +62,8 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item {
-                    BudgetTargetsSection(
-                        state = state,
+                    ChartSettingsSection(
+                        selectedChartType = state.chartType,
                         onAction = viewModel::onAction
                     )
                 }
@@ -77,16 +76,9 @@ fun SettingsScreen(
                 }
 
                 item {
-                    ChartSettingsSection(
-                        selectedChartType = state.chartType,
+                    BudgetTargetsSection(
+                        state = state,
                         onAction = viewModel::onAction
-                    )
-                }
-
-                item {
-                    SaveButton(
-                        onClick = { viewModel.onAction(SettingsActions.OnSaveClick) },
-                        enabled = state.totalPercentage == 100
                     )
                 }
             }

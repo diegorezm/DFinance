@@ -7,8 +7,18 @@ data class SettingsState(
     val needPercentage: Int = 50,
     val wantPercentage: Int = 30,
     val savingPercentage: Int = 20,
-    val totalPercentage: Int = 100,
+    val initialNeedPercentage: Int = 50,
+    val initialWantPercentage: Int = 30,
+    val initialSavingPercentage: Int = 20,
     val chartType: ChartType = ChartType.BAR,
     val currency: Currency = Currency.BRL,
     val showSaveSuccess: Boolean = false
-)
+) {
+    val totalPercentage: Int
+        get() = needPercentage + wantPercentage + savingPercentage
+
+    val isModified: Boolean
+        get() = needPercentage != initialNeedPercentage ||
+                wantPercentage != initialWantPercentage ||
+                savingPercentage != initialSavingPercentage
+}

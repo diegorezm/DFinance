@@ -1,11 +1,13 @@
 package com.diegorezm.dfinance.settings.presentation.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -82,6 +84,14 @@ fun BudgetTargetsSection(
                         color = MaterialTheme.colorScheme.error
                     )
                 }
+            }
+
+            AnimatedVisibility(visible = state.isModified) {
+                SaveButton(
+                    onClick = { onAction(SettingsActions.OnSaveClick) },
+                    enabled = state.totalPercentage == 100,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
         }
     }

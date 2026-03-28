@@ -42,7 +42,9 @@ class SettingsViewModel(
                 needPercentage = need,
                 wantPercentage = want,
                 savingPercentage = saving,
-                totalPercentage = need + want + saving,
+                initialNeedPercentage = need,
+                initialWantPercentage = want,
+                initialSavingPercentage = saving,
                 chartType = chartType,
                 currency = currency
             )
@@ -55,53 +57,62 @@ class SettingsViewModel(
                 _state.update {
                     it.copy(
                         needPercentage = action.percentage,
-                        totalPercentage = action.percentage + it.wantPercentage + it.savingPercentage
                     )
                 }
             }
+
             is SettingsActions.OnWantPercentageChange -> {
                 _state.update {
                     it.copy(
                         wantPercentage = action.percentage,
-                        totalPercentage = it.needPercentage + action.percentage + it.savingPercentage
                     )
                 }
             }
+
             is SettingsActions.OnSavingPercentageChange -> {
                 _state.update {
                     it.copy(
                         savingPercentage = action.percentage,
-                        totalPercentage = it.needPercentage + it.wantPercentage + action.percentage
                     )
                 }
             }
+
             is SettingsActions.OnChartTypeChange -> {
                 _state.update {
                     it.copy(chartType = action.chartType)
                 }
+                settings[SettingsKeys.KEY_CHART_TYPE] = action.chartType.name
             }
+
             is SettingsActions.OnCurrencyChange -> {
                 _state.update {
                     it.copy(currency = action.currency)
                 }
+                settings[SettingsKeys.KEY_CURRENCY] = action.currency.code
             }
-            SettingsActions.OnSaveClick -> saveSettings()
+
+            SettingsActions.OnSaveClick -> saveBudgetTargets()
             SettingsActions.OnDismissSuccessMessage -> {
                 _state.update { it.copy(showSaveSuccess = false) }
             }
         }
     }
 
-    private fun saveSettings() {
+    private fun saveBudgetTargets() {
         val currentState = _state.value
         settings[SettingsKeys.KEY_NEED_PERCENTAGE] = currentState.needPercentage
         settings[SettingsKeys.KEY_WANT_PERCENTAGE] = currentState.wantPercentage
         settings[SettingsKeys.KEY_SAVING_PERCENTAGE] = currentState.savingPercentage
-        settings[SettingsKeys.KEY_CHART_TYPE] = currentState.chartType.name
-        settings[SettingsKeys.KEY_CURRENCY] = currentState.currency.code
-        
-        _state.update { it.copy(showSaveSuccess = true) }
-        
+
+        _state.update {
+            it.copy(
+                initialNeedPercentage = it.needPercentage,
+                initialWantPercentage = it.wantPercentage,
+                initialSavingPercentage = it.savingPercentage,
+                showSaveSuccess = true
+            )
+        }
+
         viewModelScope.launch {
             delay(3000)
             _state.update { it.copy(showSaveSuccess = false) }
