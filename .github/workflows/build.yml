@@ -26,15 +26,22 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Build Android RELEASE APK
+      - name: Build Android Release APK
         run: ./gradlew :composeApp:assembleRelease
 
-      - name: Rename Unsigned APK
-        run: mv composeApp/build/outputs/apk/release/*-unsigned.apk composeApp/build/outputs/apk/release/DFinance.apk
+      - name: Sign Android APK
+        id: sign_app
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: composeApp/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
 
-      - name: Publish Release with APK
+      - name: Publish Release with Signed APK
         uses: softprops/action-gh-release@v2
         with:
-          files: composeApp/build/outputs/apk/release/DFinance.apk
+          files: ${{steps.sign_app.outputs.signedReleaseFile}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
