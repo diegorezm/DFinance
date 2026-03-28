@@ -103,7 +103,7 @@ fun TransactionChartSection(
                 modifier = Modifier.size(20.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            
+
         }
 
         // Chart
@@ -244,25 +244,6 @@ fun TransactionChartSection(
     }
 }
 
-@Composable
-private fun LegendItem(color: Color, label: String) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(8.dp)
-                .background(color)
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
-
 private fun buildChartData(
     transactions: List<Transaction>,
     incomeLabel: String,
@@ -293,7 +274,7 @@ private fun buildChartData(
             .filter { it.type == TransactionType.EXPENSE && it.budgetBucket == BudgetBucket.SAVING }
             .sumOf { it.amount }
             .toDouble() / 100.0
-            
+
         val netIncome = rawIncome - expenses - savings
 
         Bars(
