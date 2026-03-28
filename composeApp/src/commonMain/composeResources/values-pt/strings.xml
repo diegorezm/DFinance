@@ -68,4 +68,20 @@
     <string name="chart_expand">Expandir</string>
     <string name="chart_collapse">Recolher</string>
 
+    <!-- Settings Screen -->
+    <string name="settings_title">Configurações</string>
+    <string name="budget_targets_title">Metas de Orçamento</string>
+    <string name="budget_targets_description">Defina suas metas de gastos mensais para cada categoria.</string>
+    <string name="needs_label">Necessidades (%)</string>
+    <string name="wants_label">Desejos (%)</string>
+    <string name="savings_label">Reserva (%)</string>
+    <string name="total_label">Total: %1$d%%</string>
+    <string name="total_error">O total deve ser 100%</string>
+
+    <string name="chart_settings_title">Exibição do Gráfico</string>
+    <string name="chart_settings_description">Escolha o tipo de gráfico padrão para o seu painel.</string>
+    <string name="chart_type_bar">Gráfico de Barras</string>
+    <string name="chart_type_line">Gráfico de Linhas</string>
+    <string name="chart_type_pie">Gráfico de Pizza</string>
+    <string name="settings_saved_success">Configurações salvas com sucesso!</string>
 </resources>
